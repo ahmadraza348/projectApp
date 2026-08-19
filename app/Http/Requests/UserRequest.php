@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UserRequest extends FormRequest
 {
@@ -22,11 +23,24 @@ class UserRequest extends FormRequest
      */
     public function rules(): array
     {
+       $user = $this->route('user');
+
         return [
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
-            'password' => ['required', 'string', 'min:8'],
-            'role' => ['required', 'in:admin,project_manager,member'],
+            
+            // Ignores the current user's ID so their existing email won't fail unique validation
+            'email' => [
+                'required', 
+                'string', 
+                'email', 
+                'max:255', 
+                Rule::unique('users', 'email')->ignore($user ? $user->id : null),
+            ],
+            
+            // Password is required only if it's a new user; optional on update
+            'password' => $user ? ['nullable', 'string', 'min:8'] : ['required', 'string', 'min:8'],
+            
+            'role' => ['required', 'in:admin,manager,member'],
         ];
     }
 }
