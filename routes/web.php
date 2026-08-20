@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\{DashboardController, UserController, AuthController, CategoryController};
+use App\Http\Controllers\{DashboardController, UserController, AuthController, CategoryController, ProjectController};
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -28,7 +28,6 @@ Route::prefix('/admin')
                 Route::put('/profile/password', [UserController::class, 'profile_password'])->name('profile.password');
             });
 
-        // Categories, Projects, Tasks — accessible by admin and manager (we'll add more granular checks later)
         Route::prefix('/categories')->name('category.')->middleware('role:admin,manager')->group(function () {
             Route::get('/', [CategoryController::class, 'index'])->name('index'); 
             Route::post('/store', [CategoryController::class, 'store'])->name('store'); 
@@ -36,9 +35,13 @@ Route::prefix('/admin')
             Route::delete('/{category}', [CategoryController::class, 'destroy'])->name('destroy'); 
         });
 
-        Route::prefix('/projects')->name('projects.')->middleware('role:admin,manager')->group(function () {
-            Route::get('/', [ProjectsController::class, 'index'])->name('index');
-        });
+        Route::prefix('/projects')->name('project.')->middleware('role:admin,manager')->group(function () {
+            Route::get('/', [ProjectController::class, 'index'])->name('index'); 
+            Route::get('/create', [ProjectController::class, 'create'])->name('create'); 
+            Route::post('/store', [ProjectController::class, 'store'])->name('store'); 
+            Route::put('/update/{category}', [ProjectController::class, 'update'])->name('update'); 
+            Route::delete('/{category}', [ProjectController::class, 'destroy'])->name('destroy'); 
+        });  
 
         Route::prefix('/tasks')->name('tasks.')->middleware('role:admin,manager')->group(function () {
             Route::get('/', [TasksController::class, 'index'])->name('index');

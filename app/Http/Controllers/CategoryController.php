@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Http\Requests\CategoryRequest;
 use App\Services\CategoryService;
+use App\Models\Category;
 
 class CategoryController extends Controller
 {
@@ -24,4 +24,15 @@ class CategoryController extends Controller
         $this->service->store($request->validated());
         return back()->with('success', 'Category Added');
     }
+
+    public function update(CategoryRequest $request, Category $category){
+        $category = $this->service->update($category, $request->validated());
+        return back()->with('success', 'Category Updated');
+    }
+
+    public function destroy(Category $category){
+       $this->service->destroy($category);
+        return back()->with('success', 'Category Deleted');
+    }
 }
+

@@ -9,9 +9,21 @@ class CategoryService
     {
     return Category::paginate(10);
     }
+    
    public function store(array $data): Category
    {
     return Category::create($data);     
+   }
+
+   public function update( Category $category,  array $data): Category
+   {
+    $category->update($data);
+    return $category;
+   }
+
+   public function destroy(Category $category): void
+   {
+    $category->delete();
    }
 
 }

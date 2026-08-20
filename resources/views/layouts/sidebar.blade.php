@@ -2,7 +2,7 @@
   <div class="brand"><i class="bi bi-kanban fs-5"></i> <span>Project Manager</span></div>
   <nav class="nav flex-column pt-2">
     <a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}"><i class="bi bi-grid-1x2"></i> Dashboard</a>
-    <a class="nav-link {{ request()->routeIs('projects.index') ? 'active' : '' }}" href="{{ route('projects.index') }}"><i class="bi bi-folder2-open"></i> Projects</a>
+    <a class="nav-link {{ request()->routeIs('project.index') ? 'active' : '' }}" href="{{ route('project.index') }}"><i class="bi bi-folder2-open"></i> Projects</a>
     <a class="nav-link {{ request()->routeIs('tasks.index') ? 'active' : '' }}" href="{{ route('tasks.index') }}"><i class="bi bi-list-task"></i> Tasks</a>
     <a class="nav-link {{ request()->routeIs('reports.index') ? 'active' : '' }}" href="{{ route('reports.index') }}"><i class="bi bi-bar-chart"></i> Reports</a>
 

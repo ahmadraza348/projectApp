@@ -164,7 +164,7 @@
 
                 modalTitle.textContent = 'Edit User';
                 modalSubmit.textContent = 'Update User';
-                form.action = `/admin/user/update/${userId}`;                
+                form.action = `{{ route('user.update', ':id') }}`.replace(':id', userId);
                 let methodInput = form.querySelector('input[name="_method"]');
                 if (!methodInput) {
                     methodInput = document.createElement('input');

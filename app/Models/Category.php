@@ -11,4 +11,7 @@ class Category extends Model
         'description',
         'status',
     ];
+     protected $casts = [
+        'status' => 'boolean',
+    ];
 }

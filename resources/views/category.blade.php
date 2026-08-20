@@ -53,6 +53,7 @@
                                     <button type="submit" class="btn btn-sm btn-outline-danger">
                                         <i class="bi bi-trash"></i>
                                     </button>
+                                </form>
 
 
                             </td>
@@ -114,20 +115,18 @@
 </div>
 @endsection
 
-<!-- @push('scripts')
+ @push('scripts')
 <script>
     const addCategoryModal = document.getElementById('addCategoryModal');
     if (addCategoryModal) {
         addCategoryModal.addEventListener('show.bs.modal', function (event) {
             const button = event.relatedTarget;
-
             const modalTitle = addCategoryModal.querySelector('.modal-title');
-            const form = addCategoryModal.querySelector('form'); // Fixed: directly target the form inside modal
+            const form = addCategoryModal.querySelector('form');
             const nameInput = addCategoryModal.querySelector('#name');
             const descriptionInput = addCategoryModal.querySelector('#description');
             const statusSelect = addCategoryModal.querySelector('#status');
 
-            // Check if triggered by an edit button or the "New Category" button
             if (button && button.classList.contains('edit-user-btn')) {
                 const categoryId = button.getAttribute('data-id');
                 const name = button.getAttribute('data-name');
@@ -135,8 +134,7 @@
                 const status = button.getAttribute('data-status');
 
                 modalTitle.textContent = 'Edit Category';
-                form.action = `/admin/categories/update/${categoryId}`; // Update with your actual route URL prefix
-
+                form.action = `{{ route('category.update', ':id') }}`.replace(':id', categoryId);
                 let methodInput = form.querySelector('input[name="_method"]');
                 if (!methodInput) {
                     methodInput = document.createElement('input');
@@ -152,9 +150,8 @@
                 descriptionInput.value = description || '';
                 statusSelect.value = status || '1'; 
             } else {
-                // Reset for "Add Category" mode
                 modalTitle.textContent = 'Add Category';
-                form.action = "{{ route('category.index') }}"; // Adjust to your store route if different e.g. category.store
+                form.action = "{{ route('category.store') }}"; 
 
                 const methodInput = form.querySelector('input[name="_method"]');
                 if (methodInput) methodInput.remove();
@@ -165,4 +162,4 @@
         });
     }
 </script>
-@endpush -->
+@endpush 

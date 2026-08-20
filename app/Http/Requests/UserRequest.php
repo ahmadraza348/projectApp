@@ -28,7 +28,6 @@ class UserRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255'],
             
-            // Ignores the current user's ID so their existing email won't fail unique validation
             'email' => [
                 'required', 
                 'string', 
