@@ -8,13 +8,6 @@
     </div>
     <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addUserModal" id="addNewUserBtn"><i class="bi bi-plus-lg"></i> New User</button>
   </header>
-
-@if(session('success'))   
-        <script>
-          alert(@json(session('success'))); 
-        </script>     
-@endif
-
   <div class="page-content">
 
     <form class="filter-bar mb-4" method="GET" action="{{ route('user.index') }}">

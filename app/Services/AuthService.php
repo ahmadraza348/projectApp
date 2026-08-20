@@ -4,25 +4,26 @@ namespace App\Services;
 
 class AuthService
 {
-    public function authenticate($request)
+    public function authenticate(array $credentials): array
     {
-        $credentials = $request->only('email', 'password');
-
-        if (auth()->attempt([
-            'email' => $credentials['email'],
-            'password' => $credentials['password'],
-        ])) {
-            return redirect()->intended(route('dashboard'));
+        if (Auth()->attempt($credentials)) {
+            return [
+                'success' => true,
+                'message' => 'Login successful.',
+                'user' => Auth()->user(),
+                ];
+        }
+        else {
+            return [
+                'success' => false,
+                'message' => 'Invalid credentials. Please try again.',
+            ];
         }
 
-        return back()->withErrors([
-            session()->flash('error', 'Invalid credentials. Please try again.'),
-        ]);
     }
 
-    public function logout()
+    public function logout() :void
     {
-        auth()->logout();
-        return redirect()->route('login');
+        Auth()->logout();
     }
 }

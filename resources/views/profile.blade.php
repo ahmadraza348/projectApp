@@ -6,7 +6,7 @@
       <div class="col-lg-4">
         <div class="card text-center">
           <div class="card-body">
-            <div class="avatar-circle mx-auto mb-3" style="width:80px;height:80px;font-size:1.75rem;">AK</div>
+            <div class="avatar-circle mx-auto mb-3" style="width:80px;height:80px;font-size:1.75rem;">{{ substr($user->name, 0, 2) }}</div>
             <h5 class="fw-bold mb-0">{{ $user->name }}</h5>
             <p class="text-muted small mb-2">{{ $user->email }}</p>
             <span class="badge bg-danger-subtle text-danger border border-danger-subtle">{{ $user->role }}</span>
@@ -33,16 +33,16 @@
         <div class="card mb-3">
           <div class="card-header bg-white"><span class="section-title">Account Details</span></div>
           <div class="card-body">
-            <!-- action="{{ route('user.profile.update') }}" method="POST" -->
-            <form action="#" method="POST">
-              <!-- @csrf @method('PUT') -->
+           <form action="{{ route('user.profile.update') }}" method="POST">
+                @csrf
+                @method('PUT')
               <div class="mb-3">
                 <label class="form-label">Full Name</label>
-                <input type="text" class="form-control" name="name" value="Ali Khan">
+                <input type="text" class="form-control" name="name" value="{{ $user->name }}">
               </div>
               <div class="mb-3">
                 <label class="form-label">Email Address</label>
-                <input type="email" class="form-control" name="email" value="admin@demo.com">
+                <input type="email" class="form-control" name="email" value="{{ $user->email }}">
               </div>
               <div class="mb-0 text-end">
                 <button type="submit" class="btn btn-primary">Save Changes</button>
@@ -54,8 +54,9 @@
         <div class="card">
           <div class="card-header bg-white"><span class="section-title">Change Password</span></div>
           <div class="card-body">
-            <!-- action="{{ route('user.profile.password') }}" method="POST" -->
-            <form action="#" method="POST">
+          <form action="{{ route('user.profile.password') }}" method="POST">
+              @csrf
+              @method('PUT')
               <div class="mb-3">
                 <label class="form-label">Current Password</label>
                 <input type="password" class="form-control" name="current_password">

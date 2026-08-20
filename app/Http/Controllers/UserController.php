@@ -6,6 +6,8 @@ use App\Services\UserService;
 use App\Http\Requests\UserRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Http\Requests\ProfileUpdateRequest;
+use App\Http\Requests\ProfilePasswordRequest;
 
 class UserController extends Controller
 {
@@ -50,9 +52,28 @@ public function destroy(User $user)
         ->with('success', 'User deleted successfully.');
 }
 
-    public function profile()
-    {
-       $user = $this->service->getProfileData();
-        return view('profile', compact('user'));
-    }
+public function profile()
+{
+    $user = $this->service->getProfileData();
+    return view('profile', compact('user'));
+}
+
+public function profile_update(ProfileUpdateRequest $request)
+{
+    $user = auth()->user();
+    $this->service->updateProfile($user, $request->validated());
+
+    return redirect()->route('user.profile')->with('success', 'Profile updated successfully.');
+}
+
+public function profile_password(ProfilePasswordRequest $request)
+{
+    $user = auth()->user();
+    $this->service->updatePassword($user, $request->validated());
+
+    return redirect()->route('user.profile')->with('success', 'Password updated successfully.');
+}
+
+
+    
 }

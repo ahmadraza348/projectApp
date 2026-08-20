@@ -51,4 +51,23 @@ class UserService
 
         return $user;
     }
+
+
+    public function getProfileData(): User
+{
+    return auth()->user();
+}
+
+public function updateProfile(User $user, array $data): User
+{
+    $user->update($data);
+    return $user->refresh();
+}
+
+public function updatePassword(User $user, array $data): User
+{
+    $user->password = Hash::make($data['password']);
+    $user->save();
+    return $user->refresh();
+}
 }
