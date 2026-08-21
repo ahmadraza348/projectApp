@@ -8,7 +8,7 @@
 
     <div class="nav-section-title">Administration</div>
     <a class="nav-link {{ request()->routeIs('user.index') ? 'active' : '' }}" href="{{ route('user.index') }}"><i class="bi bi-people"></i> Users</a>
-    <a class="nav-link {{ request()->routeIs('categories.index') ? 'active' : '' }}" href="{{ route('categories.index') }}"><i class="bi bi-tags"></i> Categories</a>
+    <a class="nav-link {{ request()->routeIs('category.index') ? 'active' : '' }}" href="{{ route('category.index') }}"><i class="bi bi-tags"></i> Categories</a>
 
     <div class="nav-section-title">Account</div>
     <a class="nav-link {{ request()->routeIs('user.profile') ? 'active' : '' }}" href="{{ route('user.profile') }}"><i class="bi bi-person-circle"></i> Profile</a>

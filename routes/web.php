@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\{DashboardController, UserController, AuthController};
+use App\Http\Controllers\{DashboardController, UserController, AuthController, CategoryController};
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -29,8 +29,11 @@ Route::prefix('/admin')
             });
 
         // Categories, Projects, Tasks — accessible by admin and manager (we'll add more granular checks later)
-        Route::prefix('/categories')->name('categories.')->middleware('role:admin,manager')->group(function () {
-            Route::get('/', [CategoriesController::class, 'index'])->name('index'); // controller missing for now
+        Route::prefix('/categories')->name('category.')->middleware('role:admin,manager')->group(function () {
+            Route::get('/', [CategoryController::class, 'index'])->name('index'); 
+            Route::post('/store', [CategoryController::class, 'store'])->name('store'); 
+            Route::put('/update/{category}', [CategoryController::class, 'update'])->name('update'); 
+            Route::delete('/{category}', [CategoryController::class, 'destroy'])->name('destroy'); 
         });
 
         Route::prefix('/projects')->name('projects.')->middleware('role:admin,manager')->group(function () {
