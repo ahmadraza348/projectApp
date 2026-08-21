@@ -43,7 +43,7 @@ class UserPolicy
             return false;
         }
 
-        // Admin accounts cannot be deleted
+        // Admin accounts cannot be deleted (Fixed from Auth::user() to $model)
         if ($model->role === 'admin') {
             return false;
         }
