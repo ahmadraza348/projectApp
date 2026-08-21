@@ -19,18 +19,24 @@ class AuthController extends Controller
         return view('login');
     }
 
-    public function authenticate(LoginRequest $request)
-    {
-        $result = $this->service->authenticate($request->only('email', 'password'));
+public function authenticate(LoginRequest $request)
+{
+    $result = $this->service->authenticate($request->only('email', 'password'));
 
-        if ($result['success']) {
-            return redirect()->intended(route('dashboard'));
+    if ($result['success']) {
+        // You can add role-based redirect here
+        $role = auth()->user()->role;
+        if ($role === 'admin') {
+            return redirect()->route('dashboard');
         }
-
-        return back()->withErrors([
-            'email' => $result['message'],
-        ])->onlyInput('email');
+        // For now, all go to dashboard
+        return redirect()->intended(route('dashboard'));
     }
+
+    return back()->withErrors([
+        'email' => $result['message'],
+    ])->onlyInput('email');
+}
 
 
     public function logout(Request $request)
