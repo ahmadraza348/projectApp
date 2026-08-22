@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class ProjectRequest extends FormRequest
 {
@@ -22,8 +23,11 @@ class ProjectRequest extends FormRequest
      */
     public function rules(): array
     {
+        $project = $this->route('project');
         return [
-          'name' => ['required', 'string', 'max:255', 'unique:projects,name'],
+          'name' => ['required', 'string', 'max:255',
+          Rule::unique('projects', 'name')->ignore($project ? $project->id : ""),
+          ],
             'description' => ['nullable', 'string'],
             'category_id' => ['required', 'exists:categories,id'],
             'status' => ['required', 'in:planning,in_progress,review,complete'],

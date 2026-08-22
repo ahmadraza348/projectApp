@@ -40,8 +40,10 @@ Route::prefix('/admin')
             Route::get('/',  'index')->name('index');
             Route::get('/create',  'create')->name('create');
             Route::post('/store',  'store')->name('store');
-            Route::put('/update/{category}',  'update')->name('update');
-            Route::delete('/{category}',  'destroy')->name('destroy');
+            Route::get('/show/{project}',  'show')->name('show');
+            Route::get('/edit/{project}',  'edit')->name('edit');
+            Route::put('/update/{project}',  'update')->name('update');
+            Route::delete('/{project}',  'destroy')->name('destroy');
         });
         Route::prefix('/tasks')->name('task.')->controller(TaskController::class)->middleware('role:admin,manager, member')->group(function () {
             Route::get('/',  'index')->name('index');

@@ -18,7 +18,7 @@ class ProjectService
             if ($request->filled('search')) {
                 $query->where(function ($q) use ($request) {
                     $q->where('name', 'like', '%' . $request->search . '%')
-                      ->orWhere('description', 'like', '%' . $request->search . '%');
+                        ->orWhere('description', 'like', '%' . $request->search . '%');
                 });
             }
 
@@ -68,5 +68,31 @@ class ProjectService
 
             return $project;
         });
+    }
+
+
+
+    public function update(Project $project, array $data): Project
+    {
+        return DB::transaction(function () use ($project, $data) {
+            $members = $data['members'] ?? [];
+            unset($data['members']);
+
+            if (!isset($data['assigned_user_id']) && !empty($members)) {
+                $data['assigned_user_id'] = $members[0];
+            }
+
+            $project->update($data);
+
+            // Sync pivot table relationships for project members
+            $project->members()->sync($members);
+
+            return $project;
+        });
+    }
+
+    public function delete(Project $project): void
+    {
+        $project->delete();
     }
 }

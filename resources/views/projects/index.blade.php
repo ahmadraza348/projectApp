@@ -9,7 +9,6 @@
 
   <div class="page-content">
 
-    <!-- Filter bar -->
     <form class="filter-bar mb-4" method="GET" action="{{ route('project.index') }}">
       <div class="row g-2 align-items-center">
         <div class="col-md-4">
@@ -61,7 +60,7 @@
                 <span class="badge {{ $badgeClass }}">{{ ucfirst(str_replace('_', ' ', $project->status)) }}</span>
               </div>
               <h6 class="fw-bold mb-1">
-                <a href="#" class="text-dark">{{ $project->name }}</a>
+                <a href="{{route('project.show', $project)}}" class="text-dark">{{ $project->name }}</a>
               </h6>
               <p class="text-muted small mb-3">{{ Str::limit($project->description, 90) }}</p>
               
