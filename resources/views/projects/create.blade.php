@@ -6,7 +6,7 @@
     <button id="sidebarToggle" class="btn btn-light border d-lg-none me-2"><i class="bi bi-list"></i></button>
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb mb-0">
-        <li class="breadcrumb-item"><a href="projects.html">Projects</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('project.index') }}">Projects</a></li>
         <li class="breadcrumb-item active">New Project</li>
       </ol>
     </nav>
@@ -19,69 +19,106 @@
           <div class="card-header bg-white"><span class="section-title">Create New Project</span></div>
           <div class="card-body">
 
-            <form action="#" method="POST">
+            <!-- Fixed syntax error in route() -->
+            <form action="{{ route('project.store') }}" method="POST">
               @csrf
 
+              <!-- Project Name -->
               <div class="mb-3">
                 <label class="form-label">Project Name</label>
-                <input type="text" class="form-control" name="name" placeholder="e.g. Website Redesign" required>
+                <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}" placeholder="e.g. Website Redesign" required>
+                @error('name')
+                  <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
               </div>
 
+              <!-- Description -->
               <div class="mb-3">
                 <label class="form-label">Description</label>
-                <textarea class="form-control" name="description" rows="4" placeholder="Briefly describe the project scope..."></textarea>
+                <textarea class="form-control @error('description') is-invalid @enderror" name="description" rows="4" placeholder="Briefly describe the project scope...">{{ old('description') }}</textarea>
+                @error('description')
+                  <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
               </div>
 
+              <!-- Category & Status -->
               <div class="row g-3 mb-3">
                 <div class="col-md-6">
                   <label class="form-label">Category</label>
-                  <select class="form-select" name="category_id" required>
+                  <select class="form-select @error('category_id') is-invalid @enderror" name="category_id" required>
                     <option value="">Select category</option>
                     @foreach($data['category'] as $cat)
-                    <option value="{{$cat->name}}">{{$cat->name}}</option>
+                      <!-- Fixed: Sends $cat->id instead of $cat->name -->
+                      <option value="{{ $cat->id }}" {{ old('category_id') == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
                     @endforeach
-                  
                   </select>
+                  @error('category_id')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                  @enderror
                 </div>
+
                 <div class="col-md-6">
                   <label class="form-label">Status</label>
-                  <select class="form-select" name="status">
-                    <option value="planning">Planning</option>
-                    <option value="in_progress">In Progress</option>
-                    <option value="review">Review</option>
-                    <option value="completed">Completed</option>
+                  <select class="form-select @error('status') is-invalid @enderror" name="status">
+                    <!-- Fixed: Value matches database enum 'complete' -->
+                    <option value="planning" {{ old('status') == 'planning' ? 'selected' : '' }}>Planning</option>
+                    <option value="in_progress" {{ old('status') == 'in_progress' ? 'selected' : '' }}>In Progress</option>
+                    <option value="review" {{ old('status') == 'review' ? 'selected' : '' }}>Review</option>
+                    <option value="complete" {{ old('status') == 'complete' ? 'selected' : '' }}>Completed</option>
                   </select>
+                  @error('status')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                  @enderror
                 </div>
               </div>
 
+              <!-- Dates & Budget -->
               <div class="row g-3 mb-3">
                 <div class="col-md-4">
                   <label class="form-label">Start Date</label>
-                  <input type="date" class="form-control" name="start_date">
+                  <input type="date" class="form-control @error('start_date') is-invalid @enderror" name="start_date" value="{{ old('start_date') }}">
+                  @error('start_date')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                  @enderror
                 </div>
+
                 <div class="col-md-4">
                   <label class="form-label">End Date</label>
-                  <input type="date" class="form-control" name="end_date">
+                  <input type="date" class="form-control @error('end_date') is-invalid @enderror" name="end_date" value="{{ old('end_date') }}">
+                  @error('end_date')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                  @enderror
                 </div>
+
                 <div class="col-md-4">
                   <label class="form-label">Budget ($)</label>
-                  <input type="number" class="form-control" name="budget" placeholder="0.00" min="0" step="0.01">
+                  <input type="number" class="form-control @error('budget') is-invalid @enderror" name="budget" value="{{ old('budget') }}" placeholder="0.00" min="0" step="0.01">
+                  @error('budget')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                  @enderror
                 </div>
               </div>
 
+              <!-- Member Assignment -->
               <div class="mb-4">
                 <label class="form-label">Assign Members</label>
-                <select class="form-select" name="members[]" multiple size="5">
-                    @foreach($data['category'] as $cat)
-                    <option value="{{$cat->name}}">{{$cat->name}}</option>
-                    @endforeach
-
+                <select class="form-select @error('members') is-invalid @enderror" name="members[]" multiple size="5">
+                  @foreach($data['users'] as $user)
+                    <!-- Fixed: Sends $user->id instead of $user->name -->
+                    <option value="{{ $user->id }}" {{ is_array(old('members')) && in_array($user->id, old('members')) ? 'selected' : '' }}>
+                      {{ $user->name }} - {{ Str::upper($user->role) }}
+                    </option>
+                  @endforeach
                 </select>
+                @error('members')
+                  <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
                 <div class="form-text">Hold Ctrl (Windows) / Cmd (Mac) to select multiple members.</div>
               </div>
 
+              <!-- Action Buttons -->
               <div class="d-flex justify-content-end gap-2">
-                <a href="projects.html" class="btn btn-outline-secondary">Cancel</a>
+                <a href="{{ route('project.index') }}" class="btn btn-outline-secondary">Cancel</a>
                 <button type="submit" class="btn btn-primary">Create Project</button>
               </div>
             </form>

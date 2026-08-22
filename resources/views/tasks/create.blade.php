@@ -1,0 +1,93 @@
+@extends('layouts.layout')
+@section('content')
+
+<div class="main-content">
+    <header class="topbar d-flex align-items-center px-3">
+        <button id="sidebarToggle" class="btn btn-light border d-lg-none me-2"><i class="bi bi-list"></i></button>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="tasks-kanban.html">Tasks</a></li>
+                <li class="breadcrumb-item active">New Task</li>
+            </ol>
+        </nav>
+    </header>
+
+    <div class="page-content">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-header bg-white"><span class="section-title">Create New Task</span></div>
+                    <div class="card-body">
+
+                        <form action="#" method="POST">
+                            @csrf
+
+                            <div class="mb-3">
+                                <label class="form-label">Project</label>
+                                <select class="form-select" name="project_id" id="projectSelect" required>
+                                    <option value="">Select project</option>
+                                    <option value="1" selected>Website Redesign</option>
+                                    <option value="2">Mobile App API</option>
+                                    <option value="3">Internal CRM</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Task Title</label>
+                                <input type="text" class="form-control" name="title" placeholder="e.g. Design landing page hero" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Description</label>
+                                <textarea class="form-control" name="description" rows="4" placeholder="What needs to be done..."></textarea>
+                            </div>
+
+                            <div class="row g-3 mb-3">
+                                <div class="col-md-6">
+                                    <!-- Only members already attached to the selected project should appear here -->
+                                    <label class="form-label">Assign To</label>
+                                    <select class="form-select" name="assigned_to" required>
+                                        <option value="">Select project member</option>
+                                        <option value="2">Sara Ahmed</option>
+                                        <option value="3">Bilal Hussain</option>
+                                        <option value="4">Ayesha Malik</option>
+                                        <option value="5">Hamza Tariq</option>
+                                    </select>
+                                    <div class="form-text">Only members assigned to this project are shown.</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Priority</label>
+                                    <select class="form-select" name="priority">
+                                        <option value="low">Low</option>
+                                        <option value="medium" selected>Medium</option>
+                                        <option value="high">High</option>
+                                        <option value="urgent">Urgent</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-6">
+                                    <label class="form-label">Due Date</label>
+                                    <input type="date" class="form-control" name="due_date">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Estimated Hours</label>
+                                    <input type="number" class="form-control" name="estimated_hours" min="0" step="0.5" placeholder="e.g. 8">
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-end gap-2">
+                                <a href="tasks-kanban.html" class="btn btn-outline-secondary">Cancel</a>
+                                <button type="submit" class="btn btn-primary">Create Task</button>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@endsection
