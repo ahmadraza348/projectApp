@@ -5,8 +5,8 @@
     <button id="sidebarToggle" class="btn btn-light border d-lg-none me-2"><i class="bi bi-list"></i></button>
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb mb-0">
-        <li class="breadcrumb-item"><a href="projects.html">Projects</a></li>
-        <li class="breadcrumb-item active">Website Redesign</li>
+        <li class="breadcrumb-item"><a href="{{ route('project.index') }}">Projects</a></li>
+        <li class="breadcrumb-item active">{{$project->name}}</li>
       </ol>
     </nav>
   </header>
@@ -19,26 +19,22 @@
         <div class="d-flex flex-wrap justify-content-between align-items-start gap-3">
           <div>
             <div class="d-flex align-items-center gap-2 mb-1">
-              <h4 class="fw-bold mb-0">Website Redesign</h4>
-              <span class="badge badge-in_progress">In Progress</span>
+              <h4 class="fw-bold mb-0">{{$project->name}}</h4>
+              <span class="badge badge-{{$project->status}}">{{ ucfirst(str_replace('_',' ',$project->status)) }}</span>
             </div>
-            <p class="text-muted mb-0">Full revamp of the marketing site with a new design system and CMS.</p>
+            <p class="text-muted mb-0">{{$project->description}}</p>
           </div>
           <div class="d-flex gap-2">
-            <a href="task-create.html" class="btn btn-primary btn-sm"><i class="bi bi-plus-lg"></i> New Task</a>
+            {{-- pre-fills the project on the create form, matching how tasks/create.blade.php reads project_id --}}
+            <a href="{{ route('task.create', ['project_id' => $project->id]) }}" class="btn btn-primary btn-sm"><i class="bi bi-plus-lg"></i> New Task</a>
             <a href="{{route('project.edit', $project)}}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-pencil"></i> Edit</a>
 
-             <form action="{{ route('project.destroy', $project) }}" method="POST" class="d-inline"
-                                    onsubmit="return confirm('Are you sure you want to delete this category?')">
-                                    @csrf
-                                    @method('DELETE')
-
-                                    <button type="submit" class="btn btn-sm btn-outline-danger">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </form>
-
-
+            <form action="{{ route('project.destroy', $project) }}" method="POST" class="d-inline"
+              onsubmit="return confirm('Are you sure you want to delete this project?')">
+              @csrf
+              @method('DELETE')
+              <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+            </form>
           </div>
         </div>
 
@@ -47,39 +43,31 @@
         <div class="row g-3">
           <div class="col-6 col-md-3">
             <div class="text-muted small">Category</div>
-            <div class="fw-semibold">Marketing</div>
+            <div class="fw-semibold">{{$project->category->name}}</div>
           </div>
           <div class="col-6 col-md-3">
             <div class="text-muted small">Timeline</div>
-            <div class="fw-semibold">Jul 01 – Sep 12, 2026</div>
+            <div class="fw-semibold">{{ $project->start_date?->format('M d, Y') ?? '—' }} – {{ $project->end_date?->format('M d, Y') ?? '—' }}</div>
           </div>
           <div class="col-6 col-md-3">
             <div class="text-muted small">Budget</div>
-            <div class="fw-semibold">$18,500</div>
+            <div class="fw-semibold">Rs. {{ number_format($project->budget, 2) }}</div>
           </div>
           <div class="col-6 col-md-3">
-            <div class="text-muted small">Project Manager</div>
-            <div class="fw-semibold">Sara Ahmed</div>
+            <div class="text-muted small">Members</div>
+            <div class="fw-semibold">{{ $project->members->count() }}</div>
           </div>
-        </div>
-
-        <div class="mt-3">
-          <div class="d-flex justify-content-between small mb-1">
-            <span class="text-muted">Overall progress</span>
-            <span class="fw-semibold">65%</span>
-          </div>
-          <div class="progress"><div class="progress-bar" style="width:65%"></div></div>
         </div>
       </div>
     </div>
 
     <div class="row g-3">
-      <!-- Tasks -->
+      <!-- Tasks: now the project's real tasks, loaded via $project->tasks in ProjectController::show() -->
       <div class="col-lg-8">
         <div class="card">
           <div class="card-header bg-white d-flex justify-content-between align-items-center">
-            <span class="section-title">Tasks (12)</span>
-            <a href="tasks-kanban.html" class="small">Board view</a>
+            <span class="section-title">Tasks ({{ $project->tasks->count() }})</span>
+            <a href="{{ route('task.index', ['project_id' => $project->id]) }}" class="small">Board view</a>
           </div>
           <div class="table-responsive">
             <table class="table align-middle mb-0">
@@ -93,34 +81,28 @@
                 </tr>
               </thead>
               <tbody>
+                @forelse ($project->tasks as $task)
                 <tr>
-                  <td><a href="task-show.html" class="text-dark fw-semibold">Design landing page hero</a></td>
-                  <td><div class="d-flex align-items-center gap-2"><div class="avatar-circle" style="width:28px;height:28px;font-size:.7rem;">HT</div> Hamza T.</div></td>
-                  <td><span class="badge badge-medium">Medium</span></td>
-                  <td><span class="badge badge-in_progress">In Progress</span></td>
-                  <td class="small">Aug 22</td>
+                  <td><a href="{{ route('task.show', $task) }}" class="text-dark fw-semibold">{{ $task->title }}</a></td>
+                  <td>
+                    @if ($task->assignee)
+                    <div class="d-flex align-items-center gap-2">
+                      <div class="avatar-circle" style="width:28px;height:28px;font-size:.7rem;">{{ strtoupper(substr($task->assignee->name, 0, 2)) }}</div>
+                      {{ $task->assignee->name }}
+                    </div>
+                    @else
+                    <span class="text-muted">Unassigned</span>
+                    @endif
+                  </td>
+                  <td><span class="badge badge-{{ $task->priority }}">{{ ucfirst($task->priority) }}</span></td>
+                  <td><span class="badge badge-{{ $task->status }}">{{ ucfirst(str_replace('_', ' ', $task->status)) }}</span></td>
+                  <td class="small">{{ $task->due_date?->format('M d') ?? '—' }}</td>
                 </tr>
+                @empty
                 <tr>
-                  <td><a href="task-show.html" class="text-dark fw-semibold">Build responsive navbar</a></td>
-                  <td><div class="d-flex align-items-center gap-2"><div class="avatar-circle" style="width:28px;height:28px;font-size:.7rem;">BH</div> Bilal H.</div></td>
-                  <td><span class="badge badge-high">High</span></td>
-                  <td><span class="badge badge-review">Review</span></td>
-                  <td class="small">Aug 20</td>
+                  <td colspan="5" class="text-center text-muted py-4">No tasks yet for this project.</td>
                 </tr>
-                <tr>
-                  <td><a href="task-show.html" class="text-dark fw-semibold">Set up CMS content model</a></td>
-                  <td><div class="d-flex align-items-center gap-2"><div class="avatar-circle" style="width:28px;height:28px;font-size:.7rem;">AM</div> Ayesha M.</div></td>
-                  <td><span class="badge badge-low">Low</span></td>
-                  <td><span class="badge badge-todo">To Do</span></td>
-                  <td class="small">Aug 28</td>
-                </tr>
-                <tr>
-                  <td><a href="task-show.html" class="text-dark fw-semibold">QA cross-browser testing</a></td>
-                  <td><div class="d-flex align-items-center gap-2"><div class="avatar-circle" style="width:28px;height:28px;font-size:.7rem;">FN</div> Fatima N.</div></td>
-                  <td><span class="badge badge-urgent">Urgent</span></td>
-                  <td><span class="badge badge-completed">Completed</span></td>
-                  <td class="small">Aug 15</td>
-                </tr>
+                @endforelse
               </tbody>
             </table>
           </div>
@@ -135,59 +117,27 @@
             <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addMemberModal"><i class="bi bi-person-plus"></i></button>
           </div>
           <ul class="list-group list-group-flush">
+            @forelse($project->members as $item)
             <li class="list-group-item d-flex align-items-center gap-2">
-              <div class="avatar-circle">SA</div>
+              <div class="avatar-circle">{{ strtoupper(substr($item->name, 0, 2)) }}</div>
               <div class="flex-grow-1">
-                <div class="fw-semibold">Sara Ahmed</div>
-                <div class="text-muted small">Project Manager</div>
+                <div class="fw-semibold">{{$item->name}}</div>
+                <div class="text-muted small">{{$item->role}}</div>
               </div>
             </li>
-            <li class="list-group-item d-flex align-items-center gap-2">
-              <div class="avatar-circle">BH</div>
-              <div class="flex-grow-1">
-                <div class="fw-semibold">Bilal Hussain</div>
-                <div class="text-muted small">Developer</div>
-              </div>
-              <button class="btn btn-sm btn-link text-danger" title="Remove"><i class="bi bi-x-lg"></i></button>
-            </li>
-            <li class="list-group-item d-flex align-items-center gap-2">
-              <div class="avatar-circle">AM</div>
-              <div class="flex-grow-1">
-                <div class="fw-semibold">Ayesha Malik</div>
-                <div class="text-muted small">Developer</div>
-              </div>
-              <button class="btn btn-sm btn-link text-danger" title="Remove"><i class="bi bi-x-lg"></i></button>
-            </li>
-            <li class="list-group-item d-flex align-items-center gap-2">
-              <div class="avatar-circle">HT</div>
-              <div class="flex-grow-1">
-                <div class="fw-semibold">Hamza Tariq</div>
-                <div class="text-muted small">Designer</div>
-              </div>
-              <button class="btn btn-sm btn-link text-danger" title="Remove"><i class="bi bi-x-lg"></i></button>
-            </li>
+            @empty
+            <li class="list-group-item text-muted small">No members added yet.</li>
+            @endforelse
           </ul>
         </div>
-
-        <div class="card">
-          <div class="card-header bg-white"><span class="section-title">Hours Logged</span></div>
-          <div class="card-body">
-            <div class="d-flex justify-content-between mb-2"><span class="small text-muted">Total this project</span><span class="fw-bold">142h</span></div>
-            <div class="d-flex justify-content-between small mb-1"><span>Bilal Hussain</span><span>48h</span></div>
-            <div class="progress mb-2"><div class="progress-bar" style="width:34%"></div></div>
-            <div class="d-flex justify-content-between small mb-1"><span>Ayesha Malik</span><span>39h</span></div>
-            <div class="progress mb-2"><div class="progress-bar" style="width:27%"></div></div>
-            <div class="d-flex justify-content-between small mb-1"><span>Hamza Tariq</span><span>35h</span></div>
-            <div class="progress mb-2"><div class="progress-bar" style="width:25%"></div></div>
-          </div>
-        </div>
+        {{-- Hours Logged card intentionally left out — there's no TimeLog model/table in this project yet --}}
       </div>
     </div>
 
   </div>
 </div>
 
-<!-- Add Member Modal -->
+<!-- Add Member Modal: UI only — needs a project.members.add route + controller method to actually submit -->
 <div class="modal fade" id="addMemberModal" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -200,8 +150,9 @@
           <label class="form-label">Select user</label>
           <select class="form-select" name="user_id" required>
             <option value="">Choose a user...</option>
-            <option value="7">Zainab Riaz — Developer</option>
-            <option value="8">Usman Farooq — QA Engineer</option>
+            @foreach ($formData['users'] as $user)
+            <option value="{{ $user->id }}">{{ $user->name }}</option>
+            @endforeach
           </select>
         </div>
         <div class="modal-footer">

@@ -48,7 +48,7 @@
               <td class="d-flex align-items-center gap-2"><div class="avatar-circle">{{ substr($user->name, 0, 2) }}</div> {{ $user->name }}</td>
               <td>{{ $user->email }}</td>
               <td><span class="badge bg-danger-subtle text-danger border border-danger-subtle">{{ $user->role }}</span></td>
-              <td>—</td>
+              <td>{{$user->projects->count()}}</td>
               <td class="small">{{ $user->created_at->format('M d, Y') }}</td>
               <td class="text-end">
                 <button class="btn btn-sm btn-outline-secondary edit-user-btn" 

@@ -41,7 +41,7 @@ public function authenticate(LoginRequest $request)
 
     public function logout(Request $request)
     {
-        return $this->service->logout();
+         $this->service->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         return redirect()->route('login');

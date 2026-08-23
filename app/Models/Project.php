@@ -20,19 +20,26 @@ class Project extends Model
         'budget',
     ];
 
-    /**
-     * Relationship with Category model.
-     */
+    // Added: start_date/end_date come back from the DB as plain strings without this,
+    // so ->format() in the view crashes ("Call to a member function format() on string")
+    protected $casts = [
+        'start_date' => 'date',
+        'end_date'   => 'date',
+        'budget'     => 'decimal:2',
+    ];
+
     public function category()
     {
         return $this->belongsTo(Category::class);
     }
 
-    /**
-     * Relationship with User model (Assignee / Many-to-Many Members).
-     */
     public function members()
     {
         return $this->belongsToMany(User::class, 'project_user');
+    }
+
+    public function tasks()
+    {
+        return $this->hasMany(Task::class);
     }
 }

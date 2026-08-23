@@ -2,28 +2,36 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class TaskRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
     {
         return [
-            //
+            'project_id'      => ['required', 'exists:projects,id'],
+            'title'           => ['required', 'string', 'max:255'],
+            'description'     => ['nullable', 'string'],
+            'member_id'       => ['nullable', 'exists:users,id'],
+            'priority'        => ['required', Rule::in(['low', 'medium', 'high', 'urgent'])],
+            // fixed to match the Kanban columns / updateStatus() instead of the old planning/complete values
+            'status'          => ['nullable', Rule::in(['todo', 'in_progress', 'review', 'completed'])],
+            'due_date'        => ['nullable', 'date'],
+            'estimated_hours' => ['nullable', 'numeric', 'min:0', 'max:999.99'],
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'project_id' => 'project',
+            'member_id'  => 'assigned member',
         ];
     }
 }

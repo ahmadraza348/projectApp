@@ -1,0 +1,30 @@
+<?php
+
+namespace Database\Factories;
+
+use App\Models\TaskComment;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Models\Task;
+use App\Models\User;
+
+/**
+ * @extends Factory<TaskComment>
+ */
+class TaskCommentFactory extends Factory
+{
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+
+    
+    public function definition(): array
+    {
+        return [
+            'task_id' => Task::inRandomOrder()->value('id') ?? Task::factory(),
+            'user_id' => User::inRandomOrder()->value('id') ?? User::factory(),
+            'body'    => fake()->sentence(10),
+        ];
+    }
+}
