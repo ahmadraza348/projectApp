@@ -17,4 +17,9 @@ class Category extends Model
      protected $casts = [
         'status' => 'boolean',
     ];
+
+    public function projects()
+    {
+        return $this->hasMany(Project::class);
+    }
 }
