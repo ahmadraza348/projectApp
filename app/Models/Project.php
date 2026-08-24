@@ -42,4 +42,8 @@ class Project extends Model
     {
         return $this->hasMany(Task::class);
     }
+    public function timeLogs()
+    {
+        return $this->hasManyThrough(TaskTimeLog::class, Task::class);
+    }
 }

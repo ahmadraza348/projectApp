@@ -13,6 +13,20 @@
 
   <div class="page-content">
 
+    @if (session('success'))
+    <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
+
+    @php
+    $statusClasses = [
+    'planning' => 'bg-secondary text-white',
+    'in_progress' => 'bg-primary text-white',
+    'review' => 'bg-warning text-dark',
+    'complete' => 'bg-success text-white',
+    ];
+    $projectBadgeClass = $statusClasses[$project->status] ?? 'bg-light text-dark';
+    @endphp
+
     <!-- Project header -->
     <div class="card mb-4">
       <div class="card-body">
@@ -20,7 +34,7 @@
           <div>
             <div class="d-flex align-items-center gap-2 mb-1">
               <h4 class="fw-bold mb-0">{{$project->name}}</h4>
-              <span class="badge badge-{{$project->status}}">{{ ucfirst(str_replace('_',' ',$project->status)) }}</span>
+              <span class="badge {{ $projectBadgeClass }}">{{ ucfirst(str_replace('_',' ',$project->status)) }}</span>
             </div>
             <p class="text-muted mb-0">{{$project->description}}</p>
           </div>
@@ -137,21 +151,25 @@
   </div>
 </div>
 
-<!-- Add Member Modal: UI only — needs a project.members.add route + controller method to actually submit -->
+<!-- Add Member Modal -->
 <div class="modal fade" id="addMemberModal" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
-      <form action="#" method="POST">
+      <form action="{{ route('project.members.add', $project) }}" method="POST">
+        @csrf
         <div class="modal-header">
           <h5 class="modal-title">Add Team Member</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
           <label class="form-label">Select user</label>
+          @php $existingMemberIds = $project->members->pluck('id'); @endphp
           <select class="form-select" name="user_id" required>
             <option value="">Choose a user...</option>
             @foreach ($formData['users'] as $user)
+            @unless($existingMemberIds->contains($user->id))
             <option value="{{ $user->id }}">{{ $user->name }}</option>
+            @endunless
             @endforeach
           </select>
         </div>

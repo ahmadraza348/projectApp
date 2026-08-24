@@ -27,12 +27,15 @@
                         @forelse($categories as $cat)
                         @php
                         $status = $cat->status == 1 ? 'Active' : 'Inactive';
+                        $statusBadgeClass = $cat->status == 1
+                        ? 'bg-success-subtle text-success border border-success-subtle'
+                        : 'bg-danger-subtle text-danger border border-danger-subtle';
                         @endphp
                         <tr>
                             <td class="fw-semibold">{{$cat->name}}</td>
                             <td class="text-muted small">{{$cat->description}}</td>
-                            <td>--</td>
-                            <td><span class="badge bg-danger-subtle text-danger border border-danger-subtle">{{ $status }}</span></td>
+                            <td>{{ $cat->projects_count ?? 0 }}</td>
+                            <td><span class="badge {{ $statusBadgeClass }}">{{ $status }}</span></td>
                             <td class="text-end">
 
 
@@ -115,11 +118,11 @@
 </div>
 @endsection
 
- @push('scripts')
+@push('scripts')
 <script>
     const addCategoryModal = document.getElementById('addCategoryModal');
     if (addCategoryModal) {
-        addCategoryModal.addEventListener('show.bs.modal', function (event) {
+        addCategoryModal.addEventListener('show.bs.modal', function(event) {
             const button = event.relatedTarget;
             const modalTitle = addCategoryModal.querySelector('.modal-title');
             const form = addCategoryModal.querySelector('form');
@@ -148,18 +151,18 @@
 
                 nameInput.value = name || '';
                 descriptionInput.value = description || '';
-                statusSelect.value = status || '1'; 
+                statusSelect.value = status || '1';
             } else {
                 modalTitle.textContent = 'Add Category';
-                form.action = "{{ route('category.store') }}"; 
+                form.action = "{{ route('category.store') }}";
 
                 const methodInput = form.querySelector('input[name="_method"]');
                 if (methodInput) methodInput.remove();
 
                 form.reset();
-                statusSelect.value = '1'; 
+                statusSelect.value = '1';
             }
         });
     }
 </script>
-@endpush 
+@endpush

@@ -46,7 +46,7 @@ class ProjectService
     {
         return [
             'category' => Category::where('status', true)->get(),
-            'users'    => User::all(),
+            'users'    => User::where('role',  '!=',  'admin')->get(),
         ];
     }
 
@@ -71,7 +71,6 @@ class ProjectService
     }
 
 
-
     public function update(Project $project, array $data): Project
     {
         return DB::transaction(function () use ($project, $data) {
@@ -84,7 +83,6 @@ class ProjectService
 
             $project->update($data);
 
-            // Sync pivot table relationships for project members
             $project->members()->sync($members);
 
             return $project;
@@ -94,5 +92,11 @@ class ProjectService
     public function delete(Project $project): void
     {
         $project->delete();
+    }
+
+    public function addMember(Project $project, int $userId): Project
+    {
+        $project->members()->syncWithoutDetaching([$userId]);
+        return $project;
     }
 }

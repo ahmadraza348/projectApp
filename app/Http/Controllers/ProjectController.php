@@ -61,4 +61,15 @@ class ProjectController extends Controller
         $this->service->delete($project);
         return redirect()->route('project.index')->with('success', 'Project Deleted successfully!');
     }
+
+    public function addMember(Request $request, Project $project)
+    {
+        $validated = $request->validate([
+            'user_id' => ['required', 'exists:users,id'],
+        ]);
+
+        $this->service->addMember($project, (int) $validated['user_id']);
+
+        return back()->with('success', 'Member added to project.');
+    }
 }

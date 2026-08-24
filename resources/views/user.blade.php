@@ -44,33 +44,42 @@
           </thead>
           <tbody>
             @forelse($users as $user)
+            @php
+            $roleBadgeClass = match($user->role) {
+            'admin' => 'bg-danger-subtle text-danger border border-danger-subtle',
+            'manager' => 'bg-primary-subtle text-primary border border-primary-subtle',
+            default => 'bg-secondary-subtle text-secondary border border-secondary-subtle',
+            };
+            @endphp
             <tr>
-              <td class="d-flex align-items-center gap-2"><div class="avatar-circle">{{ substr($user->name, 0, 2) }}</div> {{ $user->name }}</td>
+              <td class="d-flex align-items-center gap-2">
+                <div class="avatar-circle">{{ substr($user->name, 0, 2) }}</div> {{ $user->name }}
+              </td>
               <td>{{ $user->email }}</td>
-              <td><span class="badge bg-danger-subtle text-danger border border-danger-subtle">{{ $user->role }}</span></td>
+              <td><span class="badge {{ $roleBadgeClass }}">{{ $user->role }}</span></td>
               <td>{{$user->projects->count()}}</td>
               <td class="small">{{ $user->created_at->format('M d, Y') }}</td>
               <td class="text-end">
-                <button class="btn btn-sm btn-outline-secondary edit-user-btn" 
-                        data-bs-toggle="modal" 
-                        data-bs-target="#addUserModal"
-                        data-id="{{ $user->id }}" 
-                        data-name="{{ $user->name }}" 
-                        data-email="{{ $user->email }}" 
-                        data-role="{{ $user->role }}">
-                    <i class="bi bi-pencil"></i>
+                <button class="btn btn-sm btn-outline-secondary edit-user-btn"
+                  data-bs-toggle="modal"
+                  data-bs-target="#addUserModal"
+                  data-id="{{ $user->id }}"
+                  data-name="{{ $user->name }}"
+                  data-email="{{ $user->email }}"
+                  data-role="{{ $user->role }}">
+                  <i class="bi bi-pencil"></i>
                 </button>
-               <form action="{{ route('user.destroy', $user) }}" method="POST" class="d-inline"
-                    onsubmit="return confirm('Are you sure you want to delete this user?')">
+                <form action="{{ route('user.destroy', $user) }}" method="POST" class="d-inline"
+                  onsubmit="return confirm('Are you sure you want to delete this user?')">
                   @csrf
                   @method('DELETE')
 
                   <button type="submit" class="btn btn-sm btn-outline-danger">
-                      <i class="bi bi-trash"></i>
+                    <i class="bi bi-trash"></i>
                   </button>
-              </form>
+                </form>
               </td>
-            </tr>          
+            </tr>
             @empty
             <tr>
               <td colspan="6" class="text-center py-4">No users found.</td>
@@ -101,14 +110,14 @@
             <label class="form-label">Full Name</label>
             <input id="name" type="text" class="form-control" value="{{ old('name') }}" name="name" required>
             @error('name')
-                <div class="text-danger">{{ $message }}</div>
+            <div class="text-danger">{{ $message }}</div>
             @enderror
           </div>
           <div class="mb-3">
             <label class="form-label">Email</label>
             <input id="email" type="email" class="form-control" name="email" value="{{ old('email') }}" required>
             @error('email')
-                <div class="text-danger">{{ $message }}</div>
+            <div class="text-danger">{{ $message }}</div>
             @enderror
           </div>
           <div class="mb-3">
@@ -119,15 +128,15 @@
               <option value="member">Member</option>
             </select>
             @error('role')
-                <div class="text-danger">{{ $message }}</div>
+            <div class="text-danger">{{ $message }}</div>
             @enderror
           </div>
           <div class="mb-3">
             <label class="form-label">Password</label>
             <input id="password" type="password" class="form-control" name="password" placeholder="Leave blank to keep current password">
             @error('password')
-                <div class="text-danger">{{ $message }}</div>
-            @enderror 
+            <div class="text-danger">{{ $message }}</div>
+            @enderror
           </div>
         </div>
         <div class="modal-footer">
@@ -142,58 +151,58 @@
 
 @push('scripts')
 <script>
-    const addUserModal = document.getElementById('addUserModal');
-    if (addUserModal) {
-        addUserModal.addEventListener('show.bs.modal', function (event) {
-            const button = event.relatedTarget;
-            
-            const modalTitle = addUserModal.querySelector('.modal-title');
-            const modalSubmit = addUserModal.querySelector('.submit-btn');
-            const form = addUserModal.querySelector('#userForm');
-            const nameInput = addUserModal.querySelector('#name');
-            const emailInput = addUserModal.querySelector('#email');
-            const roleSelect = addUserModal.querySelector('#role');
-            const passwordInput = addUserModal.querySelector('#password');
-            
-            // Check if triggered by an edit button or the "New User" button
-            if (button && button.classList.contains('edit-user-btn')) {
-                const userId = button.getAttribute('data-id');
-                const name = button.getAttribute('data-name');
-                const email = button.getAttribute('data-email');
-                const role = button.getAttribute('data-role');
+  const addUserModal = document.getElementById('addUserModal');
+  if (addUserModal) {
+    addUserModal.addEventListener('show.bs.modal', function(event) {
+      const button = event.relatedTarget;
 
-                modalTitle.textContent = 'Edit User';
-                modalSubmit.textContent = 'Update User';
-                form.action = `{{ route('user.update', ':id') }}`.replace(':id', userId);
-                let methodInput = form.querySelector('input[name="_method"]');
-                if (!methodInput) {
-                    methodInput = document.createElement('input');
-                    methodInput.type = 'hidden';
-                    methodInput.name = '_method';
-                    methodInput.value = 'PUT';
-                    form.appendChild(methodInput);
-                } else {
-                    methodInput.value = 'PUT';
-                }
+      const modalTitle = addUserModal.querySelector('.modal-title');
+      const modalSubmit = addUserModal.querySelector('.submit-btn');
+      const form = addUserModal.querySelector('#userForm');
+      const nameInput = addUserModal.querySelector('#name');
+      const emailInput = addUserModal.querySelector('#email');
+      const roleSelect = addUserModal.querySelector('#role');
+      const passwordInput = addUserModal.querySelector('#password');
 
-                nameInput.value = name || '';
-                emailInput.value = email || '';
-                roleSelect.value = role || 'member'; // Properly assigns the specific user role
-                passwordInput.required = false;
-            } else {
-                // Reset for "New User" mode
-                modalTitle.textContent = 'Add User';
-                modalSubmit.textContent = 'Save User';
-                form.action = "{{ route('user.submit') }}";
-                
-                const methodInput = form.querySelector('input[name="_method"]');
-                if (methodInput) methodInput.remove();
+      // Check if triggered by an edit button or the "New User" button
+      if (button && button.classList.contains('edit-user-btn')) {
+        const userId = button.getAttribute('data-id');
+        const name = button.getAttribute('data-name');
+        const email = button.getAttribute('data-email');
+        const role = button.getAttribute('data-role');
 
-                form.reset();
-                roleSelect.value = 'member'; // Default value reset
-                passwordInput.required = true;
-            }
-        });
-    }
+        modalTitle.textContent = 'Edit User';
+        modalSubmit.textContent = 'Update User';
+        form.action = `{{ route('user.update', ':id') }}`.replace(':id', userId);
+        let methodInput = form.querySelector('input[name="_method"]');
+        if (!methodInput) {
+          methodInput = document.createElement('input');
+          methodInput.type = 'hidden';
+          methodInput.name = '_method';
+          methodInput.value = 'PUT';
+          form.appendChild(methodInput);
+        } else {
+          methodInput.value = 'PUT';
+        }
+
+        nameInput.value = name || '';
+        emailInput.value = email || '';
+        roleSelect.value = role || 'member'; // Properly assigns the specific user role
+        passwordInput.required = false;
+      } else {
+        // Reset for "New User" mode
+        modalTitle.textContent = 'Add User';
+        modalSubmit.textContent = 'Save User';
+        form.action = "{{ route('user.submit') }}";
+
+        const methodInput = form.querySelector('input[name="_method"]');
+        if (methodInput) methodInput.remove();
+
+        form.reset();
+        roleSelect.value = 'member'; // Default value reset
+        passwordInput.required = true;
+      }
+    });
+  }
 </script>
 @endpush

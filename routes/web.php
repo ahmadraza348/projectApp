@@ -16,7 +16,7 @@ Route::prefix('/admin')
     ->middleware(['auth', 'role:admin,manager,member']) // <--- NEW
     ->group(function () {
         Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-        Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
+        Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
         // USER MANAGEMENT — only admin can access
         Route::prefix('/user')->name('user.')->controller(UserController::class)->group(function () {
@@ -44,37 +44,34 @@ Route::prefix('/admin')
             Route::get('/edit/{project}',  'edit')->name('edit');
             Route::put('/update/{project}',  'update')->name('update');
             Route::delete('/{project}',  'destroy')->name('destroy');
-            
+            Route::post('/{project}/members', 'addMember')->name('members.add');
         });
-    Route::prefix('/tasks')->name('task.')->controller(TaskController::class)->middleware('role:admin,manager,member')->group(function () {
-        Route::get('/', 'index')->name('index');
-        Route::get('/create', 'create')->name('create');
-        Route::post('/store', 'store')->name('store');
-        Route::get('/{task}/edit', 'edit')->name('edit');
-        Route::put('/{task}', 'update')->name('update');
-        Route::delete('/{task}', 'destroy')->name('destroy');
-        Route::patch('/{task}/status', 'updateStatus')->name('update-status');
-        Route::get('/api/projects/{project}/members', 'getMembers')->name('project.members');
+        Route::prefix('/tasks')->name('task.')->controller(TaskController::class)->middleware('role:admin,manager,member')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/create', 'create')->name('create');
+            Route::post('/store', 'store')->name('store');
+            Route::get('/{task}/edit', 'edit')->name('edit');
+            Route::put('/{task}', 'update')->name('update');
+            Route::delete('/{task}', 'destroy')->name('destroy');
+            Route::patch('/{task}/status', 'updateStatus')->name('update-status');
+            Route::get('/api/projects/{project}/members', 'getMembers')->name('project.members');
 
-        // New: comments / time logs / attachments
-        Route::post('/{task}/comments', [\App\Http\Controllers\TaskCommentController::class, 'store'])->name('comments.store');
-        Route::delete('/comments/{comment}', [\App\Http\Controllers\TaskCommentController::class, 'destroy'])->name('comments.destroy');
+            // New: comments / time logs / attachments
+            Route::post('/{task}/comments', [\App\Http\Controllers\TaskCommentController::class, 'store'])->name('comments.store');
+            Route::delete('/comments/{comment}', [\App\Http\Controllers\TaskCommentController::class, 'destroy'])->name('comments.destroy');
 
-        Route::post('/{task}/time-logs', [\App\Http\Controllers\TaskTimeLogController::class, 'store'])->name('time-logs.store');
-        Route::delete('/time-logs/{timeLog}', [\App\Http\Controllers\TaskTimeLogController::class, 'destroy'])->name('time-logs.destroy');
+            Route::post('/{task}/time-logs', [\App\Http\Controllers\TaskTimeLogController::class, 'store'])->name('time-logs.store');
+            Route::delete('/time-logs/{timeLog}', [\App\Http\Controllers\TaskTimeLogController::class, 'destroy'])->name('time-logs.destroy');
 
-        Route::post('/{task}/attachments', [\App\Http\Controllers\TaskAttachmentController::class, 'store'])->name('attachments.store');
-        Route::delete('/attachments/{attachment}', [\App\Http\Controllers\TaskAttachmentController::class, 'destroy'])->name('attachments.destroy');
+            Route::post('/{task}/attachments', [\App\Http\Controllers\TaskAttachmentController::class, 'store'])->name('attachments.store');
+            Route::delete('/attachments/{attachment}', [\App\Http\Controllers\TaskAttachmentController::class, 'destroy'])->name('attachments.destroy');
 
-        Route::get('/{task}', 'show')->name('show'); // keep last
-    });
+            Route::get('/{task}', 'show')->name('show'); // keep last
+        });
+        // Only 'index' is implemented on ReportController / used by the Reports view —
+        // the create/show/store/update/destroy routes previously here pointed at
+        // controller methods that don't exist and would 500 if ever hit.
         Route::prefix('/reports')->name('report.')->controller(ReportController::class)->middleware('role:admin')->group(function () {
             Route::get('/',  'index')->name('index');
-            Route::get('/create',  'create')->name('create');
-            Route::get('/show',  'show')->name('show');
-            Route::post('/store',  'store')->name('store');
-            Route::put('/update/{category}',  'update')->name('update');
-            Route::delete('/{category}',  'destroy')->name('destroy');
         });
-
     });

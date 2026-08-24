@@ -2,12 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Services\ReportService;
+use Illuminate\View\View;
 
 class DashboardController extends Controller
 {
-    public function index()
+    protected ReportService $reportService;
+
+    public function __construct(ReportService $reportService)
     {
-        return view('dashboard');
+        $this->reportService = $reportService;
+    }
+
+    public function index(): View
+    {
+        $data = $this->reportService->fetchData();
+
+        return view('dashboard', compact('data'));
     }
 }

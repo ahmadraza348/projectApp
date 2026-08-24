@@ -12,30 +12,40 @@
         <div class="row g-3 mb-4">
             <div class="col-6 col-md-3">
                 <div class="stat-card p-3 h-100 text-center">
-                    <div class="fs-3 fw-bold text-primary">20</div>
+                    <div class="fs-3 fw-bold text-primary">{{ $data['total_projects'] ?? 0 }}</div>
                     <div class="small text-muted">Total Projects</div>
                 </div>
             </div>
             <div class="col-6 col-md-3">
                 <div class="stat-card p-3 h-100 text-center">
-                    <div class="fs-3 fw-bold text-success">248</div>
+                    <div class="fs-3 fw-bold text-success">{{ $data['total_tasks'] ?? 0 }}</div>
                     <div class="small text-muted">Total Tasks</div>
                 </div>
             </div>
+
+            @php
+            $completedTasks = $data['completed_tasks'] ?? 0;
+            $totalTasks = $data['total_tasks'] ?? 0;
+
+            $avgCompletion = $totalTasks > 0
+            ? round(($completedTasks / $totalTasks) * 100)
+            : 0;
+            @endphp
+
             <div class="col-6 col-md-3">
                 <div class="stat-card p-3 h-100 text-center">
-                    <div class="fs-3 fw-bold text-warning">62%</div>
+                    <div class="fs-3 fw-bold text-warning">{{ $avgCompletion }}%</div>
                     <div class="small text-muted">Avg Completion</div>
                 </div>
             </div>
+
             <div class="col-6 col-md-3">
                 <div class="stat-card p-3 h-100 text-center">
-                    <div class="fs-3 fw-bold text-info">1,240</div>
+                    <div class="fs-3 fw-bold text-info">{{ number_format($data['hours_logged'] ?? 0) }}</div>
                     <div class="small text-muted">Hours Logged</div>
                 </div>
             </div>
         </div>
-
         <div class="row g-3">
             <!-- Project progress report -->
             <div class="col-lg-7">
@@ -52,87 +62,81 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                @forelse($data['projects'] as $project)
+                                @php
+                                $totalTasks = $project->tasks_count ?? 0;
+                                $completedTasks = $project->completed_tasks_count ?? 0;
+                                $completionPercentage = $totalTasks > 0
+                                ? round(($completedTasks / $totalTasks) * 100)
+                                : 0;
+
+                                // Determine dynamic progress bar color class
+                                $badgeClass = match (true) {
+                                $completionPercentage >= 100 => 'bg-success',
+                                $completionPercentage >= 75 => 'bg-warning',
+                                $completionPercentage >= 30 => 'bg-primary',
+                                default => 'bg-secondary',
+                                };
+                                @endphp
                                 <tr>
-                                    <td>Website Redesign</td>
-                                    <td>12</td>
+                                    <td class="fw-semibold">{{ $project->name }}</td>
+                                    <td>{{ $totalTasks }}</td>
                                     <td style="width:160px;">
-                                        <div class="progress">
-                                            <div class="progress-bar" style="width:65%"></div>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div class="progress flex-grow-1" style="height: 6px;">
+                                                <div class="progress-bar {{ $badgeClass }}" style="width: {{ $completionPercentage }}%"></div>
+                                            </div>
+                                            <span class="small text-muted me-1">{{ $completionPercentage }}%</span>
                                         </div>
                                     </td>
-                                    <td>142h</td>
+                                    <td>{{ number_format($project->total_hours ?? 0) }}h</td>
                                 </tr>
+                                @empty
                                 <tr>
-                                    <td>Mobile App API</td>
-                                    <td>18</td>
-                                    <td style="width:160px;">
-                                        <div class="progress">
-                                            <div class="progress-bar bg-warning" style="width:85%"></div>
-                                        </div>
-                                    </td>
-                                    <td>210h</td>
+                                    <td colspan="4" class="text-center text-muted py-3">No projects available</td>
                                 </tr>
-                                <tr>
-                                    <td>Internal CRM</td>
-                                    <td>9</td>
-                                    <td style="width:160px;">
-                                        <div class="progress">
-                                            <div class="progress-bar bg-secondary" style="width:15%"></div>
-                                        </div>
-                                    </td>
-                                    <td>38h</td>
-                                </tr>
-                                <tr>
-                                    <td>Payment Gateway</td>
-                                    <td>15</td>
-                                    <td style="width:160px;">
-                                        <div class="progress">
-                                            <div class="progress-bar bg-success" style="width:100%"></div>
-                                        </div>
-                                    </td>
-                                    <td>256h</td>
-                                </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
-
             <!-- Member workload -->
             <div class="col-lg-5">
                 <div class="card h-100">
-                    <div class="card-header bg-white"><span class="section-title">Member Workload</span></div>
+                    <div class="card-header bg-white">
+                        <span class="section-title">Member Workload</span>
+                    </div>
                     <div class="card-body">
-                        <div class="mb-3">
-                            <div class="d-flex justify-content-between small mb-1"><span>Bilal Hussain</span><span>14 tasks · 92h</span></div>
-                            <div class="progress">
-                                <div class="progress-bar" style="width:78%"></div>
+                        @forelse($data['members'] as $member)
+                        @php
+                        $taskCount = $member->tasks_count ?? 0;
+                        $totalHours = number_format($member->total_hours ?? 0);
+                        $percentage = $member->workload_percentage ?? 0;
+
+                        // Dynamic progress bar styling based on load
+                        $progressColor = match (true) {
+                        $percentage >= 80 => 'bg-danger',
+                        $percentage >= 60 => 'bg-warning',
+                        $percentage >= 40 => 'bg-info',
+                        $percentage >= 20 => 'bg-primary',
+                        default => 'bg-secondary',
+                        };
+                        @endphp
+                        <div class="{{ $loop->last ? 'mb-0' : 'mb-3' }}">
+                            <div class="d-flex justify-content-between small mb-1">
+                                <span class="fw-medium">{{ $member->name }}</span>
+                                <span class="text-muted">{{ $taskCount }} {{ Str::plural('task', $taskCount) }} · {{ $totalHours }}h</span>
+                            </div>
+                            <div class="progress" style="height: 6px;">
+                                <div class="progress-bar {{ $progressColor }}" style="width: {{ $percentage }}%"></div>
                             </div>
                         </div>
-                        <div class="mb-3">
-                            <div class="d-flex justify-content-between small mb-1"><span>Ayesha Malik</span><span>11 tasks · 74h</span></div>
-                            <div class="progress">
-                                <div class="progress-bar bg-info" style="width:62%"></div>
-                            </div>
+                        @empty
+                        <div class="text-center text-muted py-4">
+                            <small>No team members found</small>
                         </div>
-                        <div class="mb-3">
-                            <div class="d-flex justify-content-between small mb-1"><span>Hamza Tariq</span><span>9 tasks · 58h</span></div>
-                            <div class="progress">
-                                <div class="progress-bar bg-warning" style="width:48%"></div>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <div class="d-flex justify-content-between small mb-1"><span>Fatima Noor</span><span>7 tasks · 41h</span></div>
-                            <div class="progress">
-                                <div class="progress-bar bg-secondary" style="width:35%"></div>
-                            </div>
-                        </div>
-                        <div class="mb-0">
-                            <div class="d-flex justify-content-between small mb-1"><span>Sara Ahmed</span><span>6 tasks · 33h</span></div>
-                            <div class="progress">
-                                <div class="progress-bar bg-success" style="width:28%"></div>
-                            </div>
-                        </div>
+                        @endforelse
                     </div>
                 </div>
             </div>
