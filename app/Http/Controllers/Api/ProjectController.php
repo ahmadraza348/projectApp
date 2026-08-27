@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProjectRequest;
 use App\Http\Resources\ProjectResource;
+use App\Http\Resources\UserResource;
 use App\Models\Project;
 use App\Services\ProjectService;
 use App\Traits\ApiResponse;
@@ -51,5 +52,33 @@ class ProjectController extends Controller
     {
         $this->service->delete($project);
         return $this->successResponse(null, 'Project deleted successfully');
+    }
+
+    /**
+     * List members currently assigned to the project.
+     */
+    public function members(Project $project): JsonResponse
+    {
+        return $this->successResponse(
+            UserResource::collection($project->members),
+            'Project members fetched successfully'
+        );
+    }
+
+    /**
+     * Add a member to the project.
+     */
+    public function addMember(Request $request, Project $project): JsonResponse
+    {
+        $validated = $request->validate([
+            'user_id' => ['required', 'exists:users,id'],
+        ]);
+
+        $project = $this->service->addMember($project, (int) $validated['user_id']);
+
+        return $this->successResponse(
+            UserResource::collection($project->members()->get()),
+            'Member added to project.'
+        );
     }
 }

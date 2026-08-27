@@ -29,10 +29,10 @@ class UserController extends Controller
             $request->input('role')
         );
 
-        return $this->successResponse([
+        return $this->successResponse(
             UserResource::collection($users)->response()->getData(true),
             'Users fetched successfully.'
-        ]);
+        );
     }
 
     public function store(UserRequest $request): JsonResponse
