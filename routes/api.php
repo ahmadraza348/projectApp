@@ -18,6 +18,7 @@ Route::prefix('v1')->group(function () {
             Route::apiResource('categories', CategoryController::class);
             Route::apiResource('projects', ProjectController::class);
             Route::apiResource('users', UserController::class);
+            Route::apiResource('tasks', UserController::class);
             // Authenticated profile management routes
             Route::get('/profile', [UserController::class, 'profile'])->name('api.profile');
             Route::put('/profile', [UserController::class, 'updateProfile'])->name('api.profile.update');

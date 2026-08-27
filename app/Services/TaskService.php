@@ -58,7 +58,7 @@ class TaskService
             }
         }
 
-        return $query->latest()->get();
+return $query->latest()->paginate(10)->withQueryString();
     }
 
     public function updateStatus(Task $task, string $status): Task
