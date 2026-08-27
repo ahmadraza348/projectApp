@@ -15,11 +15,9 @@ class ProjectService
 
         if ($request) {
             // Search by name or description
-            if ($request->filled('search')) {
-                $query->where(function ($q) use ($request) {
-                    $q->where('name', 'like', '%' . $request->search . '%')
-                        ->orWhere('description', 'like', '%' . $request->search . '%');
-                });
+            if ($request->filled('search')) {           
+                    $query->where('name', 'like', '%' . $request->search . '%')
+                        ->orWhere('description', 'like', '%' . $request->search . '%');               
             }
 
             // Filter by category

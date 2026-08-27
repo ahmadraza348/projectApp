@@ -136,7 +136,7 @@
                     memberSelect.innerHTML = '<option value="">Select project member</option>';
                     members.forEach(member => {
                         const selected = oldMemberId == member.id ? 'selected' : '';
-                        memberSelect.innerHTML += `<option value="${member.id}" ${selected}>${member.name}</option>`;
+                        memberSelect.innerHTML += `<option value="${member.id}" ${selected}>${member.name} - ${member.role}</option>`;
                     });
                 })
                 .catch(() => {

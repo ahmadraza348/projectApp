@@ -44,17 +44,18 @@ class TaskService
         if (auth()->user()->role === 'member') {
             $query->where('member_id', auth()->id());
         }
+        if ($request) {
+            if ($request->filled('search')) {
+                $query->where('title', 'like', '%' . $request->search . '%');
+            }
 
-        if ($request->filled('search')) {
-            $query->where('title', 'like', '%' . $request->search . '%');
-        }
+            if ($request->filled('project_id')) {
+                $query->where('project_id', $request->project_id);
+            }
 
-        if ($request->filled('project_id')) {
-            $query->where('project_id', $request->project_id);
-        }
-
-        if ($request->filled('priority')) {
-            $query->where('priority', $request->priority);
+            if ($request->filled('priority')) {
+                $query->where('priority', $request->priority);
+            }
         }
 
         return $query->latest()->get();
