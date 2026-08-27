@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\ProjectController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
@@ -14,6 +15,7 @@ Route::prefix('v1')->group(function () {
 
             Route::middleware('role:admin,manager')->group(function () {
             Route::apiResource('categories', CategoryController::class);
+            Route::apiResource('projects', ProjectController::class);
         });
     });
 });
