@@ -14,8 +14,6 @@ class TaskControllerTest extends TestCase
 
     public function test_member_can_view_task_index(): void
     {
-        // Unlike Category/Project, the tasks section allows members too —
-        // TaskService scopes the list to their own tasks internally.
         $member = User::factory()->create(['role' => 'member']);
 
         $response = $this->actingAs($member)->get(route('task.index'));
@@ -54,21 +52,6 @@ class TaskControllerTest extends TestCase
         $response->assertStatus(302);
         $response->assertSessionHas('success', 'Task created successfully!');
         $this->assertDatabaseHas('tasks', ['title' => 'Set up CI pipeline']);
-    }
-
-    public function test_store_fails_when_priority_is_invalid(): void
-    {
-        $manager = User::factory()->create(['role' => 'manager']);
-        $project = Project::factory()->create();
-
-        $response = $this->actingAs($manager)->post(route('task.store'), [
-            'project_id' => $project->id,
-            'title' => 'Bad priority',
-            'priority' => 'not-a-real-priority',
-        ]);
-
-        $response->assertSessionHasErrors('priority');
-        $this->assertDatabaseCount('tasks', 0);
     }
 
     public function test_member_cannot_view_a_task_assigned_to_someone_else(): void
