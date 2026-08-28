@@ -20,7 +20,6 @@ class TaskRequest extends FormRequest
             'description'     => ['nullable', 'string'],
             'member_id'       => ['nullable', 'exists:users,id'],
             'priority'        => ['required', Rule::in(['low', 'medium', 'high', 'urgent'])],
-            // fixed to match the Kanban columns / updateStatus() instead of the old planning/complete values
             'status'          => ['nullable', Rule::in(['todo', 'in_progress', 'review', 'completed'])],
             'due_date'        => ['nullable', 'date'],
             'estimated_hours' => ['nullable', 'numeric', 'min:0', 'max:999.99'],
