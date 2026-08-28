@@ -12,9 +12,11 @@ class CategoryApiTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected string $baseUrl = '/api/v1/categories';
+
     public function test_guest_cannot_access_categories(): void
     {
-        $response = $this->getJson('/api/v1/categories');
+        $response = $this->getJson($this->baseUrl);
 
         $response->assertStatus(401);
     }
@@ -24,7 +26,7 @@ class CategoryApiTest extends TestCase
         $member = User::factory()->create(['role' => 'member']);
         Passport::actingAs($member);
 
-        $response = $this->getJson('/api/v1/categories');
+        $response = $this->getJson($this->baseUrl);
 
         $response->assertStatus(403);
     }
@@ -35,7 +37,7 @@ class CategoryApiTest extends TestCase
         Category::factory()->count(3)->create();
         Passport::actingAs($admin);
 
-        $response = $this->getJson('/api/v1/categories');
+        $response = $this->getJson($this->baseUrl);
 
         $response->assertStatus(200);
         $response->assertJsonCount(3, 'data');
@@ -52,7 +54,7 @@ class CategoryApiTest extends TestCase
             'status' => 1,
         ];
 
-        $response = $this->postJson('/api/v1/categories', $payload);
+        $response = $this->postJson($this->baseUrl, $payload);
 
         $response->assertStatus(201);
         $response->assertJson([
@@ -67,7 +69,7 @@ class CategoryApiTest extends TestCase
         $admin = User::factory()->create(['role' => 'admin']);
         Passport::actingAs($admin);
 
-        $response = $this->postJson('/api/v1/categories', [
+        $response = $this->postJson($this->baseUrl, [
             'description' => 'No name given',
             'status' => 1,
         ]);
