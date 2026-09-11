@@ -8,14 +8,27 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('task_attachments', function (Blueprint $table) {
+       Schema::create('task_attachments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('task_id')->constrained()->onDelete('cascade');
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            
+            // Uploader reference
+            $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
+            
+            // Polymorphic columns (creates attachable_id and attachable_type with an index)
+            $table->morphs('attachable');
+            
+            // File metadata
             $table->string('original_name');
-            $table->string('path');        // path on the 'public' disk
-            $table->unsignedBigInteger('size'); // bytes
+            $table->string('file_name');
+            $table->string('file_path');
+            $table->string('disk')->default('public');
+            $table->string('mime_type')->nullable();
+            $table->string('extension')->nullable();
+            $table->unsignedBigInteger('size'); // File size in bytes
+            $table->string('visibility')->default('private'); // e.g., public, private
+            
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

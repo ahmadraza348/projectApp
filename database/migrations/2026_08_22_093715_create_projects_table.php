@@ -11,23 +11,32 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('projects', function (Blueprint $table) {
+     Schema::create('projects', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
-            $table->mediumText('description')->nullable();
-
-            // Foreign keys with cascading options
-            $table->foreignId('category_id')->constrained('categories')->onDelete('cascade');
-            $table->foreignId('assigned_user_id')->nullable()->constrained('users')->onDelete('set null');
-
-            $table->enum('status', ['planning', 'in_progress', 'review', 'complete'])->default('planning');
-            $table->date('start_date')->nullable();
-            $table->date('end_date')->nullable();
+            $table->foreignId('department_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('client_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('project_manager_id')->nullable()->constrained('users')->nullOnDelete();
             
-            // Decimal for monetary values (10 digits total, 2 decimal places)
-            $table->decimal('budget', 10, 2)->default(0.00);
-
+            $table->string('name');
+            $table->string('code')->unique()->nullable();
+            $table->string('slug')->unique();
+            $table->mediumText('description')->nullable();
+            
+            $table->date('start_date')->nullable();
+            $table->date('deadline')->nullable();
+            $table->timestamp('completed_at')->nullable();
+            
+            $table->decimal('budget', 12, 2)->default(0.00);
+            $table->enum('priority', ['low', 'medium', 'high', 'urgent'])->default('medium');
+            $table->string('status')->default('planning'); // e.g., planning, in_progress, review, completed
+            $table->string('health_status')->nullable(); // e.g., on_track, at_risk, off_track
+            $table->unsignedTinyInteger('progress')->default(0); // Percentage from 0 to 100
+            $table->boolean('is_billable')->default(true);
+            
+            $table->text('notes')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
