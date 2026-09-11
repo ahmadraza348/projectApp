@@ -24,6 +24,9 @@ class User extends Authenticatable implements OAuthenticatable
     public function timeLogs(){
         return $this->hasMany(TaskTimeLog::class, 'user_id');
     }
+    public function departments(){
+        return $this->hasMany(Department::class);
+    }
 
     /**
      * The attributes that are mass assignable.

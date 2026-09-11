@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\DepartmentController;
 use App\Http\Controllers\Api\ProjectController;
 use App\Http\Controllers\Api\TaskAttachmentController;
 use App\Http\Controllers\Api\TaskCommentController;
@@ -27,6 +28,7 @@ Route::prefix('v1')->group(function () {
         // Categories & Projects — admin/manager only, matching the web routes.
         Route::middleware('role:admin,manager')->group(function () {
             Route::apiResource('categories', CategoryController::class);
+            Route::apiResource('departments', DepartmentController::class);
             Route::apiResource('projects', ProjectController::class);
 
             Route::get('/projects/{project}/members', [ProjectController::class, 'members'])->name('api.projects.members');

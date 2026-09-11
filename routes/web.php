@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\{DashboardController, UserController, AuthController, CategoryController, ProjectController, TaskController};
+use App\Http\Controllers\{DashboardController, UserController, AuthController, CategoryController, DepartmentController, ProjectController, TaskController};
 use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Route;
 
@@ -34,6 +34,13 @@ Route::prefix('/admin')
             Route::post('/store', 'store')->name('store');
             Route::put('/update/{category}', 'update')->name('update');
             Route::delete('/{category}', 'destroy')->name('destroy');
+        });
+
+        Route::prefix('/departments')->name('department.')->controller(DepartmentController::class)->middleware('role:admin,manager')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::post('/store', 'store')->name('store');
+            Route::put('/update/{department}', 'update')->name('update');
+            Route::delete('/{department}', 'destroy')->name('destroy');
         });
 
         Route::prefix('/projects')->name('project.')->controller(ProjectController::class)->middleware('role:admin,manager')->group(function () {
