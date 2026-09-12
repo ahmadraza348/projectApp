@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\{DashboardController, UserController, AuthController, CategoryController, DepartmentController, ProjectController, TaskController};
+use App\Http\Controllers\{DashboardController, UserController, AuthController, CategoryController, DepartmentController, ProjectController, TaskController, ClientController, ExpenceController};
 use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Route;
 
@@ -41,6 +41,20 @@ Route::prefix('/admin')
             Route::post('/store', 'store')->name('store');
             Route::put('/update/{department}', 'update')->name('update');
             Route::delete('/{department}', 'destroy')->name('destroy');
+        });
+
+        Route::prefix('/clients')->name('client.')->controller(ClientController::class)->middleware('role:admin,manager')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::post('/store', 'store')->name('store');
+            Route::put('/update/{client}', 'update')->name('update');
+            Route::delete('/{client}', 'destroy')->name('destroy');
+        });
+
+        Route::prefix('/expences')->name('expence.')->controller(ExpenceController::class)->middleware('role:admin,manager')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::post('/store', 'store')->name('store');
+            Route::put('/update/{expence}', 'update')->name('update');
+            Route::delete('/{expence}', 'destroy')->name('destroy');
         });
 
         Route::prefix('/projects')->name('project.')->controller(ProjectController::class)->middleware('role:admin,manager')->group(function () {

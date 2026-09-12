@@ -17,6 +17,8 @@
     <a class="nav-link {{ request()->routeIs('user.index') ? 'active' : '' }}" href="{{ route('user.index') }}"><i class="bi bi-people"></i> Users</a>
     <a class="nav-link {{ request()->routeIs('category.*') ? 'active' : '' }}" href="{{ route('category.index') }}"><i class="bi bi-tags"></i> Categories</a>
     <a class="nav-link {{ request()->routeIs('department.*') ? 'active' : '' }}" href="{{ route('department.index') }}"><i class="bi bi-diagram-3"></i> Departments</a>
+    <a class="nav-link {{ request()->routeIs('client.*') ? 'active' : '' }}" href="{{ route('client.index') }}"><i class="bi bi-person-vcard"></i> Clients</a>
+    <a class="nav-link {{ request()->routeIs('expence.*') ? 'active' : '' }}" href="{{ route('expence.index') }}"><i class="bi bi-receipt"></i> Expenses</a>
     @endif
 
     <div class="nav-section-title">Account</div>

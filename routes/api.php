@@ -10,6 +10,8 @@ use App\Http\Controllers\Api\TaskController;
 use App\Http\Controllers\Api\TaskTimeLogController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\ReportsController;
+use App\Http\Controllers\Api\ClientController;
+use App\Http\Controllers\Api\ExpenceController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
@@ -30,6 +32,8 @@ Route::prefix('v1')->group(function () {
             Route::apiResource('categories', CategoryController::class);
             Route::apiResource('departments', DepartmentController::class);
             Route::apiResource('projects', ProjectController::class);
+            Route::apiResource('clients', ClientController::class);
+            Route::apiResource('expences', ExpenceController::class);
 
             Route::get('/projects/{project}/members', [ProjectController::class, 'members'])->name('api.projects.members');
             Route::post('/projects/{project}/members', [ProjectController::class, 'addMember'])->name('api.projects.members.add');
