@@ -26,6 +26,7 @@ class AuthController extends Controller
             $request->boolean('remember')
         );
         if ($result['success']) {
+            toastr()->success('Logged in successfully');
             return redirect()->intended(route('dashboard'));
         }
 
@@ -40,6 +41,7 @@ class AuthController extends Controller
         $this->service->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+        toastr()->success('Logged out successfully');
         return redirect()->route('login');
     }
 }

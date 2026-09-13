@@ -60,10 +60,10 @@
                             <div class="row g-3 mb-3">
                                 <div class="col-md-6">
                                     <label class="form-label">Assign To</label>
-                                    <select class="form-select @error('member_id') is-invalid @enderror" name="member_id" id="memberSelect">
+                                    <select class="form-select @error('assigned_to') is-invalid @enderror" name="assigned_to" id="memberSelect">
                                         <option value="">Select project member</option>
                                     </select>
-                                    @error('member_id')
+                                    @error('assigned_to')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                     <div class="form-text">Only members assigned to this project are shown.</div>
@@ -118,7 +118,7 @@
     document.addEventListener('DOMContentLoaded', function() {
         const projectSelect = document.getElementById('projectSelect');
         const memberSelect = document.getElementById('memberSelect');
-        const oldMemberId = "{{ old('member_id') }}";
+        const oldMemberId = "{{ old('assigned_to') }}";
 
         function loadMembers(projectId) {
             memberSelect.innerHTML = '<option value="">Loading members...</option>';

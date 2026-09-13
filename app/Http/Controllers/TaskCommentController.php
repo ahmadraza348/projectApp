@@ -17,12 +17,14 @@ class TaskCommentController extends Controller
             'body'    => $data['body'],
         ]);
 
-        return back()->with('success', 'Comment added.');
+        toastr()->success('Comment added.');
+        return redirect()->back();
     }
 
     public function destroy(TaskComment $comment)
     {
         $comment->delete();
-        return back()->with('success', 'Comment deleted.');
+        toastr()->success('Comment deleted.');
+        return redirect()->back();
     }
 }

@@ -13,7 +13,12 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('department_id')->nullable()->constrained()->nullOnDelete();
+            // Note: no ->constrained() here on purpose. The 'departments' table
+            // (created in a later migration) itself references 'users', so adding
+            // the FK constraint at this point would be circular. The actual
+            // foreign key is added in add_department_id_foreign_to_users_table
+            // once both tables exist.
+            $table->foreignId('department_id')->nullable();
             $table->string('name');
             $table->string('username')->unique();
             $table->string('email')->unique();

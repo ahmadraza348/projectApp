@@ -59,7 +59,7 @@ class TaskControllerTest extends TestCase
         // TaskPolicy::view() restricts members to their own tasks.
         $member = User::factory()->create(['role' => 'member']);
         $someoneElse = User::factory()->create(['role' => 'member']);
-        $othersTask = Task::factory()->create(['member_id' => $someoneElse->id]);
+        $othersTask = Task::factory()->create(['assigned_to' => $someoneElse->id]);
 
         $response = $this->actingAs($member)->get(route('task.show', $othersTask));
 
@@ -69,7 +69,7 @@ class TaskControllerTest extends TestCase
     public function test_member_can_view_their_own_task(): void
     {
         $member = User::factory()->create(['role' => 'member']);
-        $ownTask = Task::factory()->create(['member_id' => $member->id]);
+        $ownTask = Task::factory()->create(['assigned_to' => $member->id]);
 
         $response = $this->actingAs($member)->get(route('task.show', $ownTask));
 
@@ -81,7 +81,7 @@ class TaskControllerTest extends TestCase
     {
         // TaskPolicy::delete() is admin/manager only — ownership doesn't grant delete rights.
         $member = User::factory()->create(['role' => 'member']);
-        $ownTask = Task::factory()->create(['member_id' => $member->id]);
+        $ownTask = Task::factory()->create(['assigned_to' => $member->id]);
 
         $response = $this->actingAs($member)->delete(route('task.destroy', $ownTask));
 
@@ -104,7 +104,7 @@ class TaskControllerTest extends TestCase
     public function test_member_can_update_status_on_their_own_task(): void
     {
         $member = User::factory()->create(['role' => 'member']);
-        $task = Task::factory()->create(['member_id' => $member->id, 'status' => 'todo']);
+        $task = Task::factory()->create(['assigned_to' => $member->id, 'status' => 'todo']);
 
         $response = $this->actingAs($member)->patch(route('task.update-status', $task), [
             'status' => 'in_progress',

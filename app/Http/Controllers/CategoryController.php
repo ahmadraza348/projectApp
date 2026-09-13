@@ -15,24 +15,31 @@ class CategoryController extends Controller
         $this->service = $service;
     }
 
-    public function index(){
+    public function index()
+    {
         $categories = $this->service->fetchData();
         return view('category', compact('categories'));
     }
 
-    public function store(CategoryRequest $request){
+    public function store(CategoryRequest $request)
+    {
         $this->service->store($request->validated());
-        return back()->with('success', 'Category Added');
+        toastr()->success('Category added successfully');
+
+        return redirect()->back();
     }
 
-    public function update(CategoryRequest $request, Category $category){
+    public function update(CategoryRequest $request, Category $category)
+    {
         $category = $this->service->update($category, $request->validated());
-        return back()->with('success', 'Category Updated');
+        toastr()->success('Category updated successfully');
+        return redirect()->back();
     }
 
-    public function destroy(Category $category){
-       $this->service->destroy($category);
-        return back()->with('success', 'Category Deleted');
+    public function destroy(Category $category)
+    {
+        $this->service->destroy($category);
+        toastr()->success('Category deleted successfully');
+        return redirect()->back();
     }
 }
-

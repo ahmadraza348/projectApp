@@ -13,7 +13,7 @@ class Task extends Model
         'project_id',
         'title',
         'description',
-        'member_id',
+        'assigned_to',
         'priority',
         'status',
         'due_date',
@@ -36,7 +36,7 @@ class Task extends Model
 
     public function assignee()
     {
-        return $this->belongsTo(User::class, 'member_id');
+        return $this->belongsTo(User::class, 'assigned_to');
     }
 
     public function comments()

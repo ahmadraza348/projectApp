@@ -17,13 +17,15 @@ class TaskTimeLogController extends Controller
         ]);
 
         $task->timeLogs()->create($data + ['user_id' => auth()->id()]);
+        toastr()->success('Time logged.');
 
-        return back()->with('success', 'Time logged.');
+        return redirect()->back();
     }
 
     public function destroy(TaskTimeLog $timeLog)
     {
         $timeLog->delete();
-        return back()->with('success', 'Time log removed.');
+        toastr()->success('Time log removed.');
+        return redirect()->back();
     }
 }

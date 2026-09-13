@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class TaskTimeLog extends Model
 {
     use HasFactory;
+
     protected $fillable = ['task_id', 'user_id', 'hours', 'logged_at', 'description'];
 
     protected $casts = [

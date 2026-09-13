@@ -13,8 +13,8 @@ class TaskSeeder extends Seeder
         Project::with('members')->get()->each(function (Project $project) {
             Task::factory(rand(4, 8))->create([
                 'project_id' => $project->id,
-                // pick the assignee from the project's real members instead of any random user
-                'member_id' => $project->members->isNotEmpty() ? $project->members->random()->id : null,
+                // tasks table's assignment column is 'assigned_to'.
+                'assigned_to' => $project->members->isNotEmpty() ? $project->members->random()->id : null,
             ])->each(function (Task $task) use ($project) {
                 $commenters = $project->members->isNotEmpty() ? $project->members : \App\Models\User::inRandomOrder()->take(2)->get();
 

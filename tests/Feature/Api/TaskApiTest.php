@@ -73,7 +73,7 @@ class TaskApiTest extends TestCase
         // TaskPolicy::view() restricts members to tasks assigned to them.
         $member = User::factory()->create(['role' => 'member']);
         $someoneElse = User::factory()->create(['role' => 'member']);
-        $othersTask = Task::factory()->create(['member_id' => $someoneElse->id]);
+        $othersTask = Task::factory()->create(['assigned_to' => $someoneElse->id]);
         Passport::actingAs($member);
 
         $response = $this->getJson("/api/v1/tasks/{$othersTask->id}");

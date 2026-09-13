@@ -42,7 +42,7 @@ class TaskService
 
         // Members only ever see tasks assigned to them; admin/manager see everything
         if (auth()->user()->role === 'member') {
-            $query->where('member_id', auth()->id());
+            $query->where('assigned_to', auth()->id());
         }
         if ($request) {
             if ($request->filled('search')) {

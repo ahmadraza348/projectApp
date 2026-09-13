@@ -52,13 +52,13 @@
                                 <div class="col-md-4">
                                     <label class="form-label">Assign To</label>
                                     {{-- pre-populated with current assignee, then refreshed by JS if project changes --}}
-                                    <select class="form-select @error('member_id') is-invalid @enderror" name="member_id" id="memberSelect">
+                                    <select class="form-select @error('assigned_to') is-invalid @enderror" name="assigned_to" id="memberSelect">
                                         <option value="">Select project member</option>
                                         @if ($task->assignee)
                                         <option value="{{ $task->assignee->id }}" selected>{{ $task->assignee->name }}</option>
                                         @endif
                                     </select>
-                                    @error('member_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                    @error('assigned_to')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                 </div>
                                 <div class="col-md-4">
                                     <label class="form-label">Priority</label>
@@ -110,7 +110,7 @@
     document.addEventListener('DOMContentLoaded', function() {
         const projectSelect = document.getElementById('projectSelect');
         const memberSelect = document.getElementById('memberSelect');
-        const currentMemberId = "{{ $task->member_id }}";
+        const currentMemberId = "{{ $task->assigned_to }}";
 
         function loadMembers(projectId) {
             const url = "{{ route('task.project.members', ':id') }}".replace(':id', projectId);

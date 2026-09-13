@@ -22,9 +22,7 @@ class UserController extends Controller
 
     public function index(Request $request)
     {
-        // Authorize viewAny action
         $this->authorize('viewAny', User::class);
-
         $users = $this->service->fetchUsers(
             $request->input('search'),
             $request->input('role')
@@ -35,19 +33,16 @@ class UserController extends Controller
 
     public function submit(UserRequest $request)
     {
-        // Authorize create action
         $this->authorize('create', User::class);
-
         $this->service->submitUser($request->validated());
         
-        return redirect()->route('user.index')->with('success', 'User created successfully.');
+        toastr()->success('User created successfully');
+        return redirect()->route('user.index');
     }
 
     public function update(UserRequest $request, User $user)
     {
-        // Authorize update action against the specific user model
         $this->authorize('update', $user);
-
         $this->service->updateUser($user, $request->validated());
 
         return redirect()
@@ -57,19 +52,15 @@ class UserController extends Controller
 
     public function destroy(User $user)
     {
-        // Authorize delete action against the specific user model
         $this->authorize('delete', $user);
 
         $this->service->deleteUser($user);
-
-        return redirect()
-            ->route('user.index')
-            ->with('success', 'User deleted successfully.');
+        toastr()->success('User deleted successfully');
+        return redirect()->route('user.index');
     }
 
     public function profile()
     {
-        // Profile viewing is typically open to any authenticated user
         $user = $this->service->getProfileData();
         return view('profile', compact('user'));
     }
@@ -78,15 +69,15 @@ class UserController extends Controller
     {
         $user = auth()->user();
         $this->service->updateProfile($user, $request->validated());
-
-        return redirect()->route('user.profile')->with('success', 'Profile updated successfully.');
+        toastr()->success('Profile updated successfully');
+        return redirect()->route('user.profile');
     }
 
     public function profile_password(ProfilePasswordRequest $request)
     {
         $user = auth()->user();
         $this->service->updatePassword($user, $request->validated());
-
-        return redirect()->route('user.profile')->with('success', 'Password updated successfully.');
+        toastr()->success('Password updated successfully');
+        return redirect()->route('user.profile');
     }
 }

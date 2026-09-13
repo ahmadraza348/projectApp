@@ -26,8 +26,8 @@ class TaskAttachmentController extends Controller
                 'size'          => $file->getSize(),
             ]);
         }
-
-        return back()->with('success', 'File(s) uploaded.');
+        toastr()->success('File(s) uploaded successfully');
+        return redirect()->back();
     }
 
     public function destroy(TaskAttachment $attachment)
@@ -35,6 +35,7 @@ class TaskAttachmentController extends Controller
         Storage::disk('public')->delete($attachment->path);
         $attachment->delete();
 
-        return back()->with('success', 'Attachment deleted.');
+        toastr()->success('Attachment deleted successfully');
+        return redirect()->back();
     }
 }

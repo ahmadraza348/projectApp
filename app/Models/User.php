@@ -19,7 +19,7 @@ class User extends Authenticatable implements OAuthenticatable
         return $this->hasMany(Project::class, 'assigned_user_id');
     }
     public function tasks(){
-        return $this->hasMany(Task::class , 'member_id' );
+        return $this->hasMany(Task::class, 'assigned_to');
     }
     public function timeLogs(){
         return $this->hasMany(TaskTimeLog::class, 'user_id');

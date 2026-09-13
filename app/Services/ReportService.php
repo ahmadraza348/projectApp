@@ -38,7 +38,7 @@ class ReportService
 
             // Fixed: FIELD() is MySQL-only and crashes on SQLite — CASE works on both
             'my_tasks'                   => Task::with('project')
-                ->where('member_id', $userId)
+                ->where('assigned_to', $userId)
                 ->whereDate('due_date', Carbon::today())
                 ->orderByRaw("CASE priority
                     WHEN 'urgent' THEN 1

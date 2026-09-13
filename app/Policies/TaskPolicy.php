@@ -26,7 +26,7 @@ class TaskPolicy
             return true;
         }
 
-        return $task->member_id === $user->id;
+        return $task->assigned_to === $user->id;
     }
 
     /**
@@ -47,7 +47,7 @@ class TaskPolicy
             return true;
         }
 
-        return $task->member_id === $user->id;
+        return $task->assigned_to === $user->id;
     }
 
     /**

@@ -18,7 +18,7 @@ class TaskRequest extends FormRequest
             'project_id'      => ['required', 'exists:projects,id'],
             'title'           => ['required', 'string', 'max:255'],
             'description'     => ['nullable', 'string'],
-            'member_id'       => ['nullable', 'exists:users,id'],
+            'assigned_to'       => ['nullable', 'exists:users,id'],
             'priority'        => ['required', Rule::in(['low', 'medium', 'high', 'urgent'])],
             'status'          => ['nullable', Rule::in(['todo', 'in_progress', 'review', 'completed'])],
             'due_date'        => ['nullable', 'date'],
@@ -30,7 +30,7 @@ class TaskRequest extends FormRequest
     {
         return [
             'project_id' => 'project',
-            'member_id'  => 'assigned member',
+            'assigned_to'  => 'assigned member',
         ];
     }
 }

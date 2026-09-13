@@ -36,7 +36,6 @@ class TaskController extends Controller
 
         $projects = $this->service->getProjectsForSelection();
         $selectedProjectId = $request->query('project_id');
-
         return view('tasks.create', compact('projects', 'selectedProjectId'));
     }
 
@@ -45,8 +44,9 @@ class TaskController extends Controller
         $this->authorize('create', Task::class);
 
         $this->service->store($request->validated());
+        toastr()->success('Task created successfully');
 
-        return redirect()->route('task.index')->with('success', 'Task created successfully!');
+        return redirect()->route('task.index');
     }
 
     public function show(Task $task)
@@ -72,8 +72,8 @@ class TaskController extends Controller
         $this->authorize('update', $task);
 
         $this->service->update($task, $request->validated());
-
-        return redirect()->route('task.index')->with('success', 'Task updated successfully!');
+        toastr()->success('Task updated successfully');
+        return redirect()->route('task.index');
     }
 
     public function destroy(Task $task)
@@ -81,8 +81,8 @@ class TaskController extends Controller
         $this->authorize('delete', $task); // members can't delete, even their own
 
         $this->service->delete($task);
-
-        return redirect()->route('task.index')->with('success', 'Task deleted successfully!');
+        toastr()->success('Task deleted successfully');
+        return redirect()->route('task.index');
     }
 
     public function getMembers(Project $project)
@@ -100,6 +100,7 @@ class TaskController extends Controller
 
         $this->service->updateStatus($task, $validated['status']);
 
+        toastr()->success('Task status updated successfully');
         return response()->json(['success' => true]);
     }
 }

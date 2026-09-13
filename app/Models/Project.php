@@ -35,7 +35,7 @@ class Project extends Model
 
     public function members()
     {
-        return $this->belongsToMany(User::class, 'project_user')->where('role', '!=' ,'admin');
+        return $this->belongsToMany(User::class, 'project_user');
     }
 
     public function tasks()

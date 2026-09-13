@@ -78,11 +78,7 @@
       <div class="col-6 col-md-3">
         <div class="stat-card p-3 h-100">
           <div class="d-flex justify-content-between align-items-start">
-            <div>
-              <div class="text-muted small">Hours Logged</div>
-              <div class="fs-4 fw-bold">{{ number_format($data['hours_logged'] ?? 0) }}h</div>
-            </div>
-            <div class="stat-icon" style="background:#fffbeb;color:#d97706;"><i class="bi bi-clock-history"></i></div>
+                      <div class="stat-icon" style="background:#fffbeb;color:#d97706;"><i class="bi bi-clock-history"></i></div>
           </div>
           <div class="small text-muted mt-2">Across all tasks</div>
         </div>
