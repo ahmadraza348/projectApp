@@ -18,6 +18,10 @@ class User extends Authenticatable implements OAuthenticatable
     public function projects(){
         return $this->hasMany(Project::class, 'assigned_user_id');
     }
+    public function memberProjects()
+    {
+        return $this->belongsToMany(Project::class, 'project_user');
+    }
     public function tasks(){
         return $this->hasMany(Task::class , 'member_id' );
     }

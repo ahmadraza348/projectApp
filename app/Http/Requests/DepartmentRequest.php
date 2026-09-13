@@ -29,7 +29,7 @@ class DepartmentRequest extends FormRequest
                 Rule::unique('departments', 'name')->ignore($department?->id),
             ],
             'description' => ['nullable', 'string'],
-            'status' => ['required', 'in:1,0'],
+            'status' => ['required', 'boolean'],
         ];
     }
 }

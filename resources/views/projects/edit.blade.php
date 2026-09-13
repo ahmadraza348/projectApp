@@ -102,6 +102,17 @@
 
               <!-- Member Assignment -->
               <div class="mb-4">
+                <label class="form-label">Project Lead</label>
+                <select class="form-select @error('assigned_user_id') is-invalid @enderror" name="assigned_user_id">
+                  <option value="">Select project lead</option>
+                  @foreach($formData['users'] as $user)
+                    <option value="{{ $user->id }}" @selected(old('assigned_user_id', $project->assigned_user_id) == $user->id)>{{ $user->name }} - {{ Str::upper($user->role) }}</option>
+                  @endforeach
+                </select>
+                @error('assigned_user_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
+              </div>
+
+              <div class="mb-4">
                 <label class="form-label">Assign Members</label>
                 @php 
                   $selectedMembers = old('members', $project->members->pluck('id')->toArray()); 

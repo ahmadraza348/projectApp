@@ -30,6 +30,7 @@ class ProjectRequest extends FormRequest
           ],
             'description' => ['nullable', 'string'],
             'category_id' => ['required', 'exists:categories,id'],
+            'assigned_user_id' => ['nullable', 'exists:users,id'],
             'status' => ['required', 'in:planning,in_progress,review,complete'],
             'start_date' => ['nullable', 'date'],
             'end_date' => ['nullable', 'date', 'after_or_equal:start_date'],

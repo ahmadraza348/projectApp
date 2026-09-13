@@ -23,7 +23,11 @@ class ProjectResource extends JsonResource
             'end_date'         => $this->end_date,
             'budget'           => $this->budget,
             'category'         => new CategoryResource($this->whenLoaded('category')),
+            'category_id'      => $this->category_id,
+            'assigned_user_id' => $this->assigned_user_id,
+            'assigned_user'    => new UserResource($this->whenLoaded('assignedUser')),
             'members'          => UserResource::collection($this->whenLoaded('members')),
+            'tasks'            => TaskResource::collection($this->whenLoaded('tasks')),
             'created_at'       => $this->created_at?->toISOString(),
             'updated_at'       => $this->updated_at?->toISOString(),
         ];

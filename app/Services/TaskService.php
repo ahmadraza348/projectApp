@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Task;
 use App\Models\Project;
 use Illuminate\Http\Request;
+use App\Notifications\ActivityNotification;
 
 class TaskService
 {
@@ -22,12 +23,15 @@ class TaskService
     public function store(array $data): Task
     {
         $data['status'] = $data['status'] ?? 'todo';
-        return Task::create($data);
+        $task = Task::create($data);
+        $this->notifyProjectParticipants($task, 'A new task was created: ' . $task->title);
+        return $task;
     }
 
     public function update(Task $task, array $data): Task
     {
         $task->update($data);
+        $this->notifyProjectParticipants($task, 'Task updated: ' . $task->title);
         return $task;
     }
 
@@ -64,6 +68,20 @@ class TaskService
     public function updateStatus(Task $task, string $status): Task
     {
         $task->update(['status' => $status]);
+        $this->notifyProjectParticipants($task, 'Task status changed: ' . $task->title);
         return $task;
+    }
+
+    private function notifyProjectParticipants(Task $task, string $message): void
+    {
+        $task->loadMissing(['project.members', 'assignee']);
+        $users = $task->project->members
+            ->concat($task->assignee ? collect([$task->assignee]) : collect())
+            ->unique('id')
+            ->reject(fn ($user) => $user->id === auth()->id());
+
+        foreach ($users as $user) {
+            $user->notify(new ActivityNotification($message, route('task.show', $task)));
+        }
     }
 }

@@ -29,7 +29,7 @@ class CategoryRequest extends FormRequest
             ],
           
             'description' => ['nullable', 'string'],
-            'status' => ['required', 'in:1,0'],
+            'status' => ['required', 'boolean'],
         ];
     }
 }

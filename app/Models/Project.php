@@ -33,6 +33,11 @@ class Project extends Model
         return $this->belongsTo(Category::class);
     }
 
+    public function assignedUser()
+    {
+        return $this->belongsTo(User::class, 'assigned_user_id');
+    }
+
     public function members()
     {
         return $this->belongsToMany(User::class, 'project_user')->where('role', '!=' ,'admin');

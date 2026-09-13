@@ -20,7 +20,10 @@ class DepartmentController extends Controller
     {
         $departments = $this->service->fetchData();
 
-        return response()->json(DepartmentResource::collection($departments)->response()->getData(true));
+        return $this->successResponse(
+            DepartmentResource::collection($departments)->response()->getData(true),
+            'Departments fetched successfully.'
+        );
     }
 
     public function show(Department $department): JsonResponse

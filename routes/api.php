@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\TaskTimeLogController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\ReportsController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\NotificationController;
 
 Route::prefix('v1')->group(function () {
 
@@ -24,6 +25,8 @@ Route::prefix('v1')->group(function () {
         Route::get('/profile', [UserController::class, 'profile'])->name('api.profile');
         Route::put('/profile', [UserController::class, 'updateProfile'])->name('api.profile.update');
         Route::put('/profile/password', [UserController::class, 'updatePassword'])->name('api.profile.password');
+        Route::get('/notifications', [NotificationController::class, 'index'])->name('api.notifications.index');
+        Route::patch('/notifications/{notification}/read', [NotificationController::class, 'markAsRead'])->name('api.notifications.read');
 
         // Categories & Projects — admin/manager only, matching the web routes.
         Route::middleware('role:admin,manager')->group(function () {

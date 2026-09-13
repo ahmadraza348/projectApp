@@ -3,6 +3,7 @@
 use App\Http\Controllers\{DashboardController, UserController, AuthController, CategoryController, DepartmentController, ProjectController, TaskController};
 use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\NotificationController;
 
 Route::get('/', function () {
     return redirect()->route('dashboard');
@@ -17,6 +18,8 @@ Route::prefix('/admin')
     ->group(function () {
         Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
         Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+        Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+        Route::patch('/notifications/{notification}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
 
         // USER MANAGEMENT — only admin can access
         Route::prefix('/user')->name('user.')->controller(UserController::class)->group(function () {
