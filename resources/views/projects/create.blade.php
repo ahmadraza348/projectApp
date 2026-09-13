@@ -41,32 +41,72 @@
                 @enderror
               </div>
 
-              <!-- Category & Status -->
+              <!-- Department, Client & Manager -->
               <div class="row g-3 mb-3">
-                <div class="col-md-6">
-                  <label class="form-label">Category</label>
-                  <select class="form-select @error('category_id') is-invalid @enderror" name="category_id" required>
-                    <option value="">Select category</option>
-                    @foreach($data['category'] as $cat)
-                      <!-- Fixed: Sends $cat->id instead of $cat->name -->
-                      <option value="{{ $cat->id }}" {{ old('category_id') == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
+                <div class="col-md-4">
+                  <label class="form-label">Department</label>
+                  <select class="form-select @error('department_id') is-invalid @enderror" name="department_id">
+                    <option value="">Select department</option>
+                    @foreach($data['departments'] as $dept)
+                      <option value="{{ $dept->id }}" {{ old('department_id') == $dept->id ? 'selected' : '' }}>{{ $dept->name }}</option>
                     @endforeach
                   </select>
-                  @error('category_id')
+                  @error('department_id')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                  @enderror
+                </div>
+
+                <div class="col-md-4">
+                  <label class="form-label">Client</label>
+                  <select class="form-select @error('client_id') is-invalid @enderror" name="client_id">
+                    <option value="">Select client</option>
+                    @foreach($data['clients'] as $client)
+                      <option value="{{ $client->id }}" {{ old('client_id') == $client->id ? 'selected' : '' }}>{{ $client->name }}</option>
+                    @endforeach
+                  </select>
+                  @error('client_id')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                  @enderror
+                </div>
+
+                <div class="col-md-4">
+                  <label class="form-label">Project Manager</label>
+                  <select class="form-select @error('project_manager_id') is-invalid @enderror" name="project_manager_id">
+                    <option value="">Select manager</option>
+                    @foreach($data['users'] as $user)
+                      <option value="{{ $user->id }}" {{ old('project_manager_id') == $user->id ? 'selected' : '' }}>{{ $user->name }}</option>
+                    @endforeach
+                  </select>
+                  @error('project_manager_id')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                  @enderror
+                </div>
+              </div>
+
+              <!-- Status & Priority -->
+              <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                  <label class="form-label">Status</label>
+                  <select class="form-select @error('status') is-invalid @enderror" name="status">
+                    <option value="planning" {{ old('status') == 'planning' ? 'selected' : '' }}>Planning</option>
+                    <option value="in_progress" {{ old('status') == 'in_progress' ? 'selected' : '' }}>In Progress</option>
+                    <option value="review" {{ old('status') == 'review' ? 'selected' : '' }}>Review</option>
+                    <option value="completed" {{ old('status') == 'completed' ? 'selected' : '' }}>Completed</option>
+                  </select>
+                  @error('status')
                     <div class="invalid-feedback">{{ $message }}</div>
                   @enderror
                 </div>
 
                 <div class="col-md-6">
-                  <label class="form-label">Status</label>
-                  <select class="form-select @error('status') is-invalid @enderror" name="status">
-                    <!-- Fixed: Value matches database enum 'complete' -->
-                    <option value="planning" {{ old('status') == 'planning' ? 'selected' : '' }}>Planning</option>
-                    <option value="in_progress" {{ old('status') == 'in_progress' ? 'selected' : '' }}>In Progress</option>
-                    <option value="review" {{ old('status') == 'review' ? 'selected' : '' }}>Review</option>
-                    <option value="complete" {{ old('status') == 'complete' ? 'selected' : '' }}>Completed</option>
+                  <label class="form-label">Priority</label>
+                  <select class="form-select @error('priority') is-invalid @enderror" name="priority">
+                    <option value="low" {{ old('priority') == 'low' ? 'selected' : '' }}>Low</option>
+                    <option value="medium" {{ old('priority', 'medium') == 'medium' ? 'selected' : '' }}>Medium</option>
+                    <option value="high" {{ old('priority') == 'high' ? 'selected' : '' }}>High</option>
+                    <option value="urgent" {{ old('priority') == 'urgent' ? 'selected' : '' }}>Urgent</option>
                   </select>
-                  @error('status')
+                  @error('priority')
                     <div class="invalid-feedback">{{ $message }}</div>
                   @enderror
                 </div>
@@ -83,9 +123,9 @@
                 </div>
 
                 <div class="col-md-4">
-                  <label class="form-label">End Date</label>
-                  <input type="date" class="form-control @error('end_date') is-invalid @enderror" name="end_date" value="{{ old('end_date') }}">
-                  @error('end_date')
+                  <label class="form-label">Deadline</label>
+                  <input type="date" class="form-control @error('deadline') is-invalid @enderror" name="deadline" value="{{ old('deadline') }}">
+                  @error('deadline')
                     <div class="invalid-feedback">{{ $message }}</div>
                   @enderror
                 </div>

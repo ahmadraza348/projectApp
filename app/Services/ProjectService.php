@@ -2,7 +2,8 @@
 
 namespace App\Services;
 
-use App\Models\Category;
+use App\Models\Client;
+use App\Models\Department;
 use App\Models\User;
 use App\Models\Project;
 use Illuminate\Support\Facades\DB;
@@ -11,18 +12,21 @@ class ProjectService
 {
     public function fetchProjects($request = null)
     {
-        $query = Project::with(['category', 'members'])->withCount('members');
+        $query = Project::with(['department', 'client', 'manager', 'members'])->withCount('members');
 
         if ($request) {
             // Search by name or description
-            if ($request->filled('search')) {           
-                    $query->where('name', 'like', '%' . $request->search . '%')
-                        ->orWhere('description', 'like', '%' . $request->search . '%');               
+            if ($request->filled('search')) {
+                $search = $request->search;
+                $query->where(function ($query) use ($search) {
+                    $query->where('name', 'like', "%{$search}%")
+                        ->orWhere('description', 'like', "%{$search}%");
+                });
             }
 
-            // Filter by category
-            if ($request->filled('category')) {
-                $query->where('category_id', $request->category);
+            // Filter by department
+            if ($request->filled('department')) {
+                $query->where('department_id', $request->department);
             }
 
             // Filter by status
@@ -32,19 +36,20 @@ class ProjectService
         }
 
         $projects = $query->latest()->paginate(9)->withQueryString();
-        $categories = Category::where('status', true)->get();
+        $departments = Department::where('status', true)->get();
 
         return [
-            'projects'   => $projects,
-            'categories' => $categories,
+            'projects'    => $projects,
+            'departments' => $departments,
         ];
     }
 
     public function getCreateFormData(): array
     {
         return [
-            'category' => Category::where('status', true)->get(),
-            'users'    => User::where('role',  '!=',  'admin')->get(),
+            'departments' => Department::where('status', true)->get(),
+            'clients'     => Client::orderBy('name')->get(),
+            'users'       => User::where('role', '!=', 'admin')->get(),
         ];
     }
 
@@ -54,9 +59,7 @@ class ProjectService
             $members = $data['members'] ?? [];
             unset($data['members']);
 
-            if (!isset($data['assigned_user_id']) && !empty($members)) {
-                $data['assigned_user_id'] = $members[0];
-            }
+            $data['created_by'] = $data['created_by'] ?? auth()->id();
 
             $project = Project::create($data);
 
@@ -68,16 +71,11 @@ class ProjectService
         });
     }
 
-
     public function update(Project $project, array $data): Project
     {
         return DB::transaction(function () use ($project, $data) {
             $members = $data['members'] ?? [];
             unset($data['members']);
-
-            if (!isset($data['assigned_user_id']) && !empty($members)) {
-                $data['assigned_user_id'] = $members[0];
-            }
 
             $project->update($data);
 

@@ -31,8 +31,8 @@ class TaskService
             $assignee = User::find($task->assigned_to);
             if ($assignee) {
                 $assignee->notify(
-    new TaskAssignedNotification($task, auth()->user())
-);
+                    new TaskAssignedNotification($task, auth()->user())
+                );
             }
         }
         return $task;
@@ -45,8 +45,8 @@ class TaskService
             $assignee = User::find($task->assigned_to);
             if ($assignee) {
                 $assignee->notify(
-    new TaskAssignedNotification($task, auth()->user())
-);
+                    new TaskAssignedNotification($task, auth()->user())
+                );
             }
         }
         return $task;

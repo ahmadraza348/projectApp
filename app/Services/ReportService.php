@@ -26,8 +26,7 @@ class ReportService
             'hours_logged'               => TaskTimeLog::sum('hours'),
             'total_team_members'         => User::count(),
 
-            'projects'                   => Project::with(['category'])
-                ->withCount([
+            'projects'                   => Project::withCount([
                     'tasks',
                     'tasks as completed_tasks_count' => fn($q) => $q->where('status', 'completed')
                 ])

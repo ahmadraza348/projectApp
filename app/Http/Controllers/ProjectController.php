@@ -25,7 +25,6 @@ class ProjectController extends Controller
     public function create()
     {
         $data = $this->service->getCreateFormData();
-        toastr()->success('Project created successfully');
         return view('projects.create', compact('data'));
     }
 
@@ -39,14 +38,14 @@ class ProjectController extends Controller
     public function show(Project $project)
     {
         // Added tasks.assignee — real tasks now feed the Tasks table on this page
-        $project->load(['members', 'category', 'tasks.assignee']);
+        $project->load(['members', 'department', 'client', 'manager', 'tasks.assignee']);
         $formData = $this->service->getCreateFormData();
         return view('projects.show', compact('project', 'formData'));
     }
 
     public function edit(Project $project)
     {
-        $project->load(['members', 'category']);
+        $project->load(['members', 'department', 'client', 'manager']);
         $formData = $this->service->getCreateFormData();
         return view('projects.edit', compact('project', 'formData'));
     }

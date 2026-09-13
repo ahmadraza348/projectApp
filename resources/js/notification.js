@@ -15,7 +15,6 @@ if (window.authUserId && window.Echo) {
 
     const channelName = `App.Models.User.${window.authUserId}`;
 
-    console.log('🔌 Subscribing to:', channelName);
 
     window.Echo
         .private(channelName)

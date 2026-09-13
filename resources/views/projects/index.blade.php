@@ -15,11 +15,11 @@
           <input type="text" class="form-control" name="search" value="{{ request('search') }}" placeholder="Search projects...">
         </div>
         <div class="col-md-3">
-          <select class="form-select" name="category">
-            <option value="">All Categories</option>
-            @foreach($data['categories'] as $category)
-              <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>
-                {{ $category->name }}
+          <select class="form-select" name="department">
+            <option value="">All Departments</option>
+            @foreach($data['departments'] as $department)
+              <option value="{{ $department->id }}" {{ request('department') == $department->id ? 'selected' : '' }}>
+                {{ $department->name }}
               </option>
             @endforeach
           </select>
@@ -30,7 +30,7 @@
             <option value="planning" {{ request('status') == 'planning' ? 'selected' : '' }}>Planning</option>
             <option value="in_progress" {{ request('status') == 'in_progress' ? 'selected' : '' }}>In Progress</option>
             <option value="review" {{ request('status') == 'review' ? 'selected' : '' }}>Review</option>
-            <option value="complete" {{ request('status') == 'complete' ? 'selected' : '' }}>Completed</option>
+            <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>Completed</option>
           </select>
         </div>
         <div class="col-md-2 d-grid">
@@ -47,7 +47,7 @@
             'planning'    => 'bg-secondary text-white',
             'in_progress' => 'bg-primary text-white',
             'review'      => 'bg-warning text-dark',
-            'complete'    => 'bg-success text-white',
+            'completed'   => 'bg-success text-white',
           ];
           $badgeClass = $statusClasses[$project->status] ?? 'bg-light text-dark';
         @endphp
@@ -56,7 +56,7 @@
           <div class="card h-100">
             <div class="card-body">
               <div class="d-flex justify-content-between align-items-start mb-2">
-                <span class="badge bg-light text-dark border">{{ $project->category->name ?? 'Uncategorized' }}</span>
+                <span class="badge bg-light text-dark border">{{ $project->department->name ?? 'No Department' }}</span>
                 <span class="badge {{ $badgeClass }}">{{ ucfirst(str_replace('_', ' ', $project->status)) }}</span>
               </div>
               <h6 class="fw-bold mb-1">
@@ -68,7 +68,7 @@
                 <span><i class="bi bi-people"></i> {{ $project->members_count }} member(s)</span>
                 <span>
                   <i class="bi bi-calendar"></i> 
-                  {{ $project->end_date ? \Carbon\Carbon::parse($project->end_date)->format('M d, Y') : 'No Due Date' }}
+                  {{ $project->deadline?->format('M d, Y') ?? 'No Due Date' }}
                 </span>
               </div>
             </div>

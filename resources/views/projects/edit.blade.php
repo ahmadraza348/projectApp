@@ -41,23 +41,50 @@
                 @enderror
               </div>
 
-              <!-- Category & Status -->
+              <!-- Department, Client & Manager -->
               <div class="row g-3 mb-3">
-                <div class="col-md-6">
-                  <label class="form-label">Category</label>
-                  <select class="form-select @error('category_id') is-invalid @enderror" name="category_id" required>
-                    <option value="">Select category</option>
-                    @foreach($formData['category'] as $cat)
-                      <option value="{{ $cat->id }}" {{ old('category_id', $project->category_id) == $cat->id ? 'selected' : '' }}>
-                        {{ $cat->name }}
-                      </option>
+                <div class="col-md-4">
+                  <label class="form-label">Department</label>
+                  <select class="form-select @error('department_id') is-invalid @enderror" name="department_id">
+                    <option value="">Select department</option>
+                    @foreach($formData['departments'] as $dept)
+                      <option value="{{ $dept->id }}" {{ old('department_id', $project->department_id) == $dept->id ? 'selected' : '' }}>{{ $dept->name }}</option>
                     @endforeach
                   </select>
-                  @error('category_id')
+                  @error('department_id')
                     <div class="invalid-feedback">{{ $message }}</div>
                   @enderror
                 </div>
 
+                <div class="col-md-4">
+                  <label class="form-label">Client</label>
+                  <select class="form-select @error('client_id') is-invalid @enderror" name="client_id">
+                    <option value="">Select client</option>
+                    @foreach($formData['clients'] as $client)
+                      <option value="{{ $client->id }}" {{ old('client_id', $project->client_id) == $client->id ? 'selected' : '' }}>{{ $client->name }}</option>
+                    @endforeach
+                  </select>
+                  @error('client_id')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                  @enderror
+                </div>
+
+                <div class="col-md-4">
+                  <label class="form-label">Project Manager</label>
+                  <select class="form-select @error('project_manager_id') is-invalid @enderror" name="project_manager_id">
+                    <option value="">Select manager</option>
+                    @foreach($formData['users'] as $user)
+                      <option value="{{ $user->id }}" {{ old('project_manager_id', $project->project_manager_id) == $user->id ? 'selected' : '' }}>{{ $user->name }}</option>
+                    @endforeach
+                  </select>
+                  @error('project_manager_id')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                  @enderror
+                </div>
+              </div>
+
+              <!-- Status & Priority -->
+              <div class="row g-3 mb-3">
                 <div class="col-md-6">
                   <label class="form-label">Status</label>
                   <select class="form-select @error('status') is-invalid @enderror" name="status">
@@ -65,9 +92,23 @@
                     <option value="planning" {{ $currentStatus == 'planning' ? 'selected' : '' }}>Planning</option>
                     <option value="in_progress" {{ $currentStatus == 'in_progress' ? 'selected' : '' }}>In Progress</option>
                     <option value="review" {{ $currentStatus == 'review' ? 'selected' : '' }}>Review</option>
-                    <option value="complete" {{ $currentStatus == 'complete' ? 'selected' : '' }}>Completed</option>
+                    <option value="completed" {{ $currentStatus == 'completed' ? 'selected' : '' }}>Completed</option>
                   </select>
                   @error('status')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                  @enderror
+                </div>
+
+                <div class="col-md-6">
+                  <label class="form-label">Priority</label>
+                  @php $currentPriority = old('priority', $project->priority); @endphp
+                  <select class="form-select @error('priority') is-invalid @enderror" name="priority">
+                    <option value="low" {{ $currentPriority == 'low' ? 'selected' : '' }}>Low</option>
+                    <option value="medium" {{ $currentPriority == 'medium' ? 'selected' : '' }}>Medium</option>
+                    <option value="high" {{ $currentPriority == 'high' ? 'selected' : '' }}>High</option>
+                    <option value="urgent" {{ $currentPriority == 'urgent' ? 'selected' : '' }}>Urgent</option>
+                  </select>
+                  @error('priority')
                     <div class="invalid-feedback">{{ $message }}</div>
                   @enderror
                 </div>
@@ -77,16 +118,16 @@
               <div class="row g-3 mb-3">
                 <div class="col-md-4">
                   <label class="form-label">Start Date</label>
-                  <input type="date" class="form-control @error('start_date') is-invalid @enderror" name="start_date" value="{{ old('start_date', optional($project->start_date)->format('Y-m-d') ?? $project->start_date) }}">
+                  <input type="date" class="form-control @error('start_date') is-invalid @enderror" name="start_date" value="{{ old('start_date', optional($project->start_date)->format('Y-m-d')) }}">
                   @error('start_date')
                     <div class="invalid-feedback">{{ $message }}</div>
                   @enderror
                 </div>
 
                 <div class="col-md-4">
-                  <label class="form-label">End Date</label>
-                  <input type="date" class="form-control @error('end_date') is-invalid @enderror" name="end_date" value="{{ old('end_date', optional($project->end_date)->format('Y-m-d') ?? $project->end_date) }}">
-                  @error('end_date')
+                  <label class="form-label">Deadline</label>
+                  <input type="date" class="form-control @error('deadline') is-invalid @enderror" name="deadline" value="{{ old('deadline', optional($project->deadline)->format('Y-m-d')) }}">
+                  @error('deadline')
                     <div class="invalid-feedback">{{ $message }}</div>
                   @enderror
                 </div>

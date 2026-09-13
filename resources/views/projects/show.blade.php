@@ -22,7 +22,7 @@
     'planning' => 'bg-secondary text-white',
     'in_progress' => 'bg-primary text-white',
     'review' => 'bg-warning text-dark',
-    'complete' => 'bg-success text-white',
+    'completed' => 'bg-success text-white',
     ];
     $projectBadgeClass = $statusClasses[$project->status] ?? 'bg-light text-dark';
     @endphp
@@ -56,12 +56,24 @@
 
         <div class="row g-3">
           <div class="col-6 col-md-3">
-            <div class="text-muted small">Category</div>
-            <div class="fw-semibold">{{$project->category->name}}</div>
+            <div class="text-muted small">Department</div>
+            <div class="fw-semibold">{{ $project->department->name ?? '—' }}</div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="text-muted small">Client</div>
+            <div class="fw-semibold">{{ $project->client->name ?? '—' }}</div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="text-muted small">Manager</div>
+            <div class="fw-semibold">{{ $project->manager->name ?? '—' }}</div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="text-muted small">Priority</div>
+            <div class="fw-semibold">{{ ucfirst($project->priority) }}</div>
           </div>
           <div class="col-6 col-md-3">
             <div class="text-muted small">Timeline</div>
-            <div class="fw-semibold">{{ $project->start_date?->format('M d, Y') ?? '—' }} – {{ $project->end_date?->format('M d, Y') ?? '—' }}</div>
+            <div class="fw-semibold">{{ $project->start_date?->format('M d, Y') ?? '—' }} – {{ $project->deadline?->format('M d, Y') ?? '—' }}</div>
           </div>
           <div class="col-6 col-md-3">
             <div class="text-muted small">Budget</div>

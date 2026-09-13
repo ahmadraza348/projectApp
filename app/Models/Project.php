@@ -4,44 +4,85 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 
 class Project extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
-
-            'department_id',
-            'client_id',
-            'created_by',
-            'project_manager_id',
-            'name',
-            'code',
-            'slug',
-            'description',
-            'start_date',
-            'deadline',
-            'completed_at',
-            'budget',
-            'priority',
-            'status',
-            'health_status',
-            'progress',
-            'is_billable',
-            'notes',
+        'department_id',
+        'client_id',
+        'created_by',
+        'project_manager_id',
+        'name',
+        'code',
+        'slug',
+        'description',
+        'start_date',
+        'deadline',
+        'completed_at',
+        'budget',
+        'priority',
+        'status',
+        'health_status',
+        'progress',
+        'is_billable',
+        'notes',
     ];
 
-    // Added: start_date/end_date come back from the DB as plain strings without this,
-    // so ->format() in the view crashes ("Call to a member function format() on string")
+    // The migration has 'deadline' (not 'end_date') and 'completed_at' is a datetime.
+    // Casting these means ->format() works directly in Blade without extra parsing.
     protected $casts = [
-        'start_date' => 'date',
-        'end_date'   => 'date',
-        'budget'     => 'decimal:2',
+        'start_date'   => 'date',
+        'deadline'     => 'date',
+        'completed_at' => 'datetime',
+        'budget'       => 'decimal:2',
+        'progress'     => 'integer',
+        'is_billable'  => 'boolean',
     ];
 
-    public function category()
+    protected static function booted(): void
     {
-        return $this->belongsTo(Category::class);
+        static::creating(function (Project $project) {
+            if (empty($project->slug)) {
+                $project->slug = static::generateUniqueSlug($project->name);
+            }
+        });
+    }
+
+    protected static function generateUniqueSlug(string $name): string
+    {
+        $base = Str::slug($name) ?: 'project';
+        $slug = $base;
+        $i = 1;
+
+        while (static::withTrashed()->where('slug', $slug)->exists()) {
+            $slug = $base . '-' . $i++;
+        }
+
+        return $slug;
+    }
+
+    public function department()
+    {
+        return $this->belongsTo(Department::class);
+    }
+
+    public function client()
+    {
+        return $this->belongsTo(Client::class);
+    }
+
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function manager()
+    {
+        return $this->belongsTo(User::class, 'project_manager_id');
     }
 
     public function members()
@@ -53,6 +94,7 @@ class Project extends Model
     {
         return $this->hasMany(Task::class);
     }
+
     public function timeLogs()
     {
         return $this->hasManyThrough(TaskTimeLog::class, Task::class);

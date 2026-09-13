@@ -10,13 +10,13 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     <link href="{{ asset('frontend/assets/css/style.css') }}" rel="stylesheet">
-        @vite('resources/js/app.js')
-
 </head>
 
 <body>
 
     @include('layouts.sidebar')
+
+    
 
     @if(session('success'))
         <script>
@@ -32,6 +32,8 @@
     <script>
         window.authUserId = @json(auth()->id());
     </script>
+
+    @vite('resources/js/app.js')
 
     @stack('scripts')
 

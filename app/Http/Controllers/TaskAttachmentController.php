@@ -22,8 +22,13 @@ class TaskAttachmentController extends Controller
             $task->attachments()->create([
                 'user_id'       => auth()->id(),
                 'original_name' => $file->getClientOriginalName(),
-                'path'          => $path,
+                'file_name'     => $file->hashName(),
+                'file_path'     => $path,
+                'disk'          => 'public',
+                'mime_type'     => $file->getClientMimeType(),
+                'extension'     => $file->getClientOriginalExtension(),
                 'size'          => $file->getSize(),
+                'visibility'    => 'private',
             ]);
         }
         toastr()->success('File(s) uploaded successfully');
@@ -32,7 +37,7 @@ class TaskAttachmentController extends Controller
 
     public function destroy(TaskAttachment $attachment)
     {
-        Storage::disk('public')->delete($attachment->path);
+        Storage::disk($attachment->disk ?? 'public')->delete($attachment->file_path);
         $attachment->delete();
 
         toastr()->success('Attachment deleted successfully');

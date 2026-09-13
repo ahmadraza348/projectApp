@@ -4,17 +4,41 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Storage;
 
 class TaskAttachment extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
-    protected $fillable = ['task_id', 'user_id', 'original_name', 'path', 'size'];
+    protected $fillable = [
+        'user_id',
+        'attachable_id',
+        'attachable_type',
+        'original_name',
+        'file_name',
+        'file_path',
+        'disk',
+        'mime_type',
+        'extension',
+        'size',
+        'visibility',
+    ];
 
+    protected $casts = [
+        'size' => 'integer',
+    ];
+
+    public function attachable()
+    {
+        return $this->morphTo();
+    }
+
+    // Convenience accessor: attachments are only ever created for tasks right
+    // now, so this reads naturally as $attachment->task in controllers/views.
     public function task()
     {
-        return $this->belongsTo(Task::class);
+        return $this->belongsTo(Task::class, 'attachable_id')->where('attachable_type', Task::class);
     }
 
     public function user()
@@ -32,6 +56,6 @@ class TaskAttachment extends Model
 
     public function getUrlAttribute(): string
     {
-        return Storage::disk('public')->url($this->path);
+        return Storage::disk($this->disk ?? 'public')->url($this->file_path);
     }
 }

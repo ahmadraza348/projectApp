@@ -51,6 +51,6 @@ class Task extends Model
 
     public function attachments()
     {
-        return $this->hasMany(TaskAttachment::class)->latest();
+        return $this->morphMany(TaskAttachment::class, 'attachable')->latest();
     }
 }
