@@ -5,6 +5,8 @@ namespace App\Services;
 use App\Models\Task;
 use App\Models\Project;
 use Illuminate\Http\Request;
+use App\Models\User;
+use App\Notifications\TaskAssignedNotification;
 
 class TaskService
 {
@@ -22,12 +24,31 @@ class TaskService
     public function store(array $data): Task
     {
         $data['status'] = $data['status'] ?? 'todo';
-        return Task::create($data);
+        $task = Task::create($data);
+
+        // Send notification when a task is created with an assignee 
+        if (!empty($task->assigned_to)) {
+            $assignee = User::find($task->assigned_to);
+            if ($assignee) {
+                $assignee->notify(
+    new TaskAssignedNotification($task, auth()->user())
+);
+            }
+        }
+        return $task;
     }
 
     public function update(Task $task, array $data): Task
     {
-        $task->update($data);
+        $task->update($data); // Notify only when the assignee has changed 
+        if ($task->wasChanged('assigned_to') && !empty($task->assigned_to)) {
+            $assignee = User::find($task->assigned_to);
+            if ($assignee) {
+                $assignee->notify(
+    new TaskAssignedNotification($task, auth()->user())
+);
+            }
+        }
         return $task;
     }
 

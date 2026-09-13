@@ -16,7 +16,7 @@ class User extends Authenticatable implements OAuthenticatable
     use HasApiTokens, HasFactory, Notifiable;
 
     public function projects(){
-        return $this->hasMany(Project::class, 'assigned_user_id');
+        return $this->hasMany(Project::class, 'project_manager_id');
     }
     public function tasks(){
         return $this->hasMany(Task::class, 'assigned_to');

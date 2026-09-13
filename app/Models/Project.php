@@ -10,14 +10,25 @@ class Project extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name',
-        'description',
-        'category_id',
-        'assigned_user_id',
-        'status',
-        'start_date',
-        'end_date',
-        'budget',
+
+            'department_id',
+            'client_id',
+            'created_by',
+            'project_manager_id',
+            'name',
+            'code',
+            'slug',
+            'description',
+            'start_date',
+            'deadline',
+            'completed_at',
+            'budget',
+            'priority',
+            'status',
+            'health_status',
+            'progress',
+            'is_billable',
+            'notes',
     ];
 
     // Added: start_date/end_date come back from the DB as plain strings without this,
