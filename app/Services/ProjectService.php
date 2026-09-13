@@ -16,12 +16,20 @@ class ProjectService
 
         if ($request) {
             // Search by name or description
+<<<<<<< HEAD
             if ($request->filled('search')) {
                 $search = $request->search;
                 $query->where(function ($query) use ($search) {
                     $query->where('name', 'like', "%{$search}%")
                         ->orWhere('description', 'like', "%{$search}%");
                 });
+=======
+            if ($request->filled('search')) {           
+                    $query->where(function ($query) use ($request) {
+                        $query->where('name', 'like', '%' . $request->search . '%')
+                            ->orWhere('description', 'like', '%' . $request->search . '%');
+                    });
+>>>>>>> agents/bugfix-crud-operations-and-notifications
             }
 
             // Filter by department

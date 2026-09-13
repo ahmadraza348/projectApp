@@ -5,8 +5,12 @@ namespace App\Services;
 use App\Models\Task;
 use App\Models\Project;
 use Illuminate\Http\Request;
+<<<<<<< HEAD
 use App\Models\User;
 use App\Notifications\TaskAssignedNotification;
+=======
+use App\Notifications\ActivityNotification;
+>>>>>>> agents/bugfix-crud-operations-and-notifications
 
 class TaskService
 {
@@ -25,6 +29,7 @@ class TaskService
     {
         $data['status'] = $data['status'] ?? 'todo';
         $task = Task::create($data);
+<<<<<<< HEAD
 
         // Send notification when a task is created with an assignee 
         if (!empty($task->assigned_to)) {
@@ -35,11 +40,15 @@ class TaskService
                 );
             }
         }
+=======
+        $this->notifyProjectParticipants($task, 'A new task was created: ' . $task->title);
+>>>>>>> agents/bugfix-crud-operations-and-notifications
         return $task;
     }
 
     public function update(Task $task, array $data): Task
     {
+<<<<<<< HEAD
         $task->update($data); // Notify only when the assignee has changed 
         if ($task->wasChanged('assigned_to') && !empty($task->assigned_to)) {
             $assignee = User::find($task->assigned_to);
@@ -49,6 +58,10 @@ class TaskService
                 );
             }
         }
+=======
+        $task->update($data);
+        $this->notifyProjectParticipants($task, 'Task updated: ' . $task->title);
+>>>>>>> agents/bugfix-crud-operations-and-notifications
         return $task;
     }
 
@@ -85,6 +98,20 @@ class TaskService
     public function updateStatus(Task $task, string $status): Task
     {
         $task->update(['status' => $status]);
+        $this->notifyProjectParticipants($task, 'Task status changed: ' . $task->title);
         return $task;
+    }
+
+    private function notifyProjectParticipants(Task $task, string $message): void
+    {
+        $task->loadMissing(['project.members', 'assignee']);
+        $users = $task->project->members
+            ->concat($task->assignee ? collect([$task->assignee]) : collect())
+            ->unique('id')
+            ->reject(fn ($user) => $user->id === auth()->id());
+
+        foreach ($users as $user) {
+            $user->notify(new ActivityNotification($message, route('task.show', $task)));
+        }
     }
 }

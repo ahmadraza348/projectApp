@@ -38,14 +38,22 @@ class ProjectController extends Controller
     public function show(Project $project)
     {
         // Added tasks.assignee — real tasks now feed the Tasks table on this page
+<<<<<<< HEAD
         $project->load(['members', 'department', 'client', 'manager', 'tasks.assignee']);
+=======
+        $project->load(['members', 'category', 'assignedUser', 'tasks.assignee']);
+>>>>>>> agents/bugfix-crud-operations-and-notifications
         $formData = $this->service->getCreateFormData();
         return view('projects.show', compact('project', 'formData'));
     }
 
     public function edit(Project $project)
     {
+<<<<<<< HEAD
         $project->load(['members', 'department', 'client', 'manager']);
+=======
+        $project->load(['members', 'category', 'assignedUser']);
+>>>>>>> agents/bugfix-crud-operations-and-notifications
         $formData = $this->service->getCreateFormData();
         return view('projects.edit', compact('project', 'formData'));
     }

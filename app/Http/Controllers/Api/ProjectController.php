@@ -36,14 +36,14 @@ class ProjectController extends Controller
 
     public function show(Project $project): JsonResponse
     {
-        $project->load(['members', 'category', 'tasks.assignee']);
+        $project->load(['members', 'category', 'assignedUser', 'tasks.assignee']);
         return $this->successResponse(new ProjectResource($project), 'Project fetched successfully');
     }
 
     public function update(ProjectRequest $request, Project $project): JsonResponse
     {
         $updatedProject = $this->service->update($project, $request->validated());
-        $updatedProject->load(['members', 'category']);
+        $updatedProject->load(['members', 'category', 'assignedUser']);
 
         return $this->successResponse(new ProjectResource($updatedProject), 'Project updated successfully');
     }

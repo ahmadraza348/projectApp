@@ -1,5 +1,30 @@
 <aside class="sidebar">
-  <div class="brand"><i class="bi bi-kanban fs-5"></i> <span>Project Manager</span></div>
+  <div class="brand d-flex align-items-center justify-content-between">
+    <span><i class="bi bi-kanban fs-5"></i> <span>Project Manager</span></span>
+    @auth
+    <div class="dropdown">
+      <button class="btn btn-link text-white position-relative p-0" data-bs-toggle="dropdown" aria-label="Notifications">
+        <i class="bi bi-bell fs-5"></i>
+        <span id="notification-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger {{ auth()->user()->unreadNotifications()->count() ? '' : 'd-none' }}">{{ auth()->user()->unreadNotifications()->count() }}</span>
+      </button>
+      <div class="dropdown-menu dropdown-menu-end p-0 shadow" style="min-width: 320px;">
+        <div class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom">
+          <strong>Recent notifications</strong>
+          <small class="text-muted">Live updates</small>
+        </div>
+        <div id="notification-list" class="notification-list">
+          @forelse(auth()->user()->notifications()->latest()->limit(10)->get() as $notification)
+            <a href="{{ $notification->data['url'] ?? '#' }}" class="dropdown-item text-wrap {{ $notification->read_at ? '' : 'fw-semibold' }}" data-notification-id="{{ $notification->id }}">
+              {{ $notification->data['message'] ?? 'New activity' }}<small class="d-block text-muted">{{ $notification->created_at->diffForHumans() }}</small>
+            </a>
+          @empty
+            <span class="dropdown-item text-muted">No notifications yet.</span>
+          @endforelse
+        </div>
+      </div>
+    </div>
+    @endauth
+  </div>
   <nav class="nav flex-column pt-2">
     <a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}"><i class="bi bi-grid-1x2"></i> Dashboard</a>
     @php $role = auth()->user()->role; @endphp

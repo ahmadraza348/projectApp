@@ -85,6 +85,11 @@ class Project extends Model
         return $this->belongsTo(User::class, 'project_manager_id');
     }
 
+    public function assignedUser()
+    {
+        return $this->belongsTo(User::class, 'assigned_user_id');
+    }
+
     public function members()
     {
         return $this->belongsToMany(User::class, 'project_user');

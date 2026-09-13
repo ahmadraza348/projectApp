@@ -35,6 +35,7 @@ class ProjectRequest extends FormRequest
                 Rule::unique('projects', 'name')->ignore($project ? $project->id : null),
             ],
             'description' => ['nullable', 'string'],
+<<<<<<< HEAD
 
             'department_id'       => ['nullable', 'exists:departments,id'],
             'client_id'           => ['nullable', 'exists:clients,id'],
@@ -48,6 +49,11 @@ class ProjectRequest extends FormRequest
             'status'   => ['required', Rule::in(['planning', 'in_progress', 'review', 'completed'])],
             'priority' => ['required', Rule::in(['low', 'medium', 'high', 'urgent'])],
 
+=======
+            'category_id' => ['required', 'exists:categories,id'],
+            'assigned_user_id' => ['nullable', 'exists:users,id'],
+            'status' => ['required', 'in:planning,in_progress,review,complete'],
+>>>>>>> agents/bugfix-crud-operations-and-notifications
             'start_date' => ['nullable', 'date'],
             'deadline'   => ['nullable', 'date', 'after_or_equal:start_date'],
 

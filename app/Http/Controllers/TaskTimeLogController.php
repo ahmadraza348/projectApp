@@ -5,11 +5,15 @@ namespace App\Http\Controllers;
 use App\Models\Task;
 use App\Models\TaskTimeLog;
 use Illuminate\Http\Request;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class TaskTimeLogController extends Controller
 {
+    use AuthorizesRequests;
+
     public function store(Request $request, Task $task)
     {
+        $this->authorize('view', $task);
         $data = $request->validate([
             'hours'       => ['required', 'numeric', 'min:0.25', 'max:24'],
             'logged_at'   => ['required', 'date'],
@@ -24,6 +28,8 @@ class TaskTimeLogController extends Controller
 
     public function destroy(TaskTimeLog $timeLog)
     {
+        $this->authorize('view', $timeLog->task);
+        abort_unless($timeLog->user_id === auth()->id() || in_array(auth()->user()->role, ['admin', 'manager']), 403);
         $timeLog->delete();
         toastr()->success('Time log removed.');
         return redirect()->back();
