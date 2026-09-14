@@ -15,17 +15,25 @@ class User extends Authenticatable implements OAuthenticatable
     /** @use HasFactory<UserFactory> */
     use HasApiTokens, HasFactory, Notifiable;
 
-    public function projects(){
+    public function projects()
+    {
         return $this->hasMany(Project::class, 'assigned_user_id');
     }
-    public function tasks(){
-        return $this->hasMany(Task::class , 'member_id' );
+    public function tasks()
+    {
+        return $this->hasMany(Task::class, 'member_id');
     }
-    public function timeLogs(){
+    public function timeLogs()
+    {
         return $this->hasMany(TaskTimeLog::class, 'user_id');
     }
-    public function departments(){
+    public function departments()
+    {
         return $this->hasMany(Department::class);
+    }
+    public function activityLogs()
+    {
+        return $this->hasMany(ActivityLog::class);
     }
 
     /**

@@ -146,7 +146,15 @@
               My Profile
             </a>
           </li>
+          <li>
+            <a
+              class="dropdown-item"
+              href="{{ route('user.activity-log.index') }}">
+              Activity Logs
+            </a>
+          </li>
 
+          
           <li>
             <hr class="dropdown-divider">
           </li>

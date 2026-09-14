@@ -10,6 +10,10 @@ use App\Events\ProjectCreated;
 
 class ProjectService
 {
+    public function __construct(
+        protected ActivityLogService $activityLogService
+    ) {}
+
     public function fetchProjects($request = null)
     {
         $query = Project::with(['category', 'members'])
@@ -61,27 +65,39 @@ class ProjectService
     }
 
 
-    public function store(array $data): Project
-    {
-        $project = DB::transaction(function () use ($data) {
+public function store(array $data): Project
+{
+    $project = DB::transaction(function () use ($data) {
 
-            $members = $data['members'] ?? [];
-            unset($data['members']);
-            $project = Project::create($data);
-            if (!empty($data['assigned_user_id'])) {
-                $members[] = $data['assigned_user_id'];
-            }
-            $members = array_unique($members);
-            if (!empty($members)) {
-                $project->members()->sync($members);
-            }
+        $members = $data['members'] ?? [];
 
+        unset($data['members']);
 
-            return $project;
-        });
-        ProjectCreated::dispatch($project);
+        $project = Project::create($data);
+
+        if (!empty($data['assigned_user_id'])) {
+            $members[] = $data['assigned_user_id'];
+        }
+
+        $members = array_unique($members);
+
+        if (!empty($members)) {
+            $project->members()->sync($members);
+        }
+
+        $this->activityLogService->log(
+            'created',
+            $project,
+            'Created project "' . $project->name . '"'
+        );
+
         return $project;
-    }
+    });
+
+    ProjectCreated::dispatch($project);
+
+    return $project;
+}
 
 
     public function update(Project $project, array $data): Project
@@ -100,7 +116,7 @@ class ProjectService
             return $project;
         });
     }
-    
+
 
 
     public function delete(Project $project): void

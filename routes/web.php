@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\{DashboardController, UserController, AuthController, CategoryController, DepartmentController, ProjectController, TaskController};
+use App\Http\Controllers\{DashboardController, UserController, AuthController, CategoryController, ActivityLogController, ProjectController, TaskController};
 use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Route;
 
@@ -27,6 +27,9 @@ Route::prefix('/admin')
             Route::get('/profile',  'profile')->name('profile');
             Route::put('/profile/update',  'profile_update')->name('profile.update');
             Route::put('/profile/password',  'profile_password')->name('profile.password');
+
+            Route::get('/activity-logs', [ActivityLogController::class, 'index'])
+            ->name('activity-log.index');
         });
 
         Route::prefix('/categories')->name('category.')->controller(CategoryController::class)->middleware('role:admin,manager')->group(function () {
@@ -34,13 +37,6 @@ Route::prefix('/admin')
             Route::post('/store', 'store')->name('store');
             Route::put('/update/{category}', 'update')->name('update');
             Route::delete('/{category}', 'destroy')->name('destroy');
-        });
-
-        Route::prefix('/departments')->name('department.')->controller(DepartmentController::class)->middleware('role:admin,manager')->group(function () {
-            Route::get('/', 'index')->name('index');
-            Route::post('/store', 'store')->name('store');
-            Route::put('/update/{department}', 'update')->name('update');
-            Route::delete('/{department}', 'destroy')->name('destroy');
         });
 
         Route::prefix('/projects')->name('project.')->controller(ProjectController::class)->middleware('role:admin,manager')->group(function () {
