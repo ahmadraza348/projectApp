@@ -34,6 +34,7 @@ class ProjectRequest extends FormRequest
             'start_date' => ['nullable', 'date'],
             'end_date' => ['nullable', 'date', 'after_or_equal:start_date'],
             'budget' => ['nullable', 'numeric', 'min:0'],
+            'assigned_user_id' => ['nullable', 'exists:users,id'],
             'members' => ['nullable', 'array'],
             'members.*' => ['exists:users,id'],
         ];

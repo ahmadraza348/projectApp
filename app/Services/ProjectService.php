@@ -6,18 +6,23 @@ use App\Models\Category;
 use App\Models\User;
 use App\Models\Project;
 use Illuminate\Support\Facades\DB;
+use App\Events\ProjectCreated;
 
 class ProjectService
 {
     public function fetchProjects($request = null)
     {
-        $query = Project::with(['category', 'members'])->withCount('members');
+        $query = Project::with(['category', 'members'])
+            ->withCount('members');
 
         if ($request) {
+
             // Search by name or description
-            if ($request->filled('search')) {           
-                    $query->where('name', 'like', '%' . $request->search . '%')
-                        ->orWhere('description', 'like', '%' . $request->search . '%');               
+            if ($request->filled('search')) {
+                $query->where(function ($q) use ($request) {
+                    $q->where('name', 'like', '%' . $request->search . '%')
+                        ->orWhere('description', 'like', '%' . $request->search . '%');
+                });
             }
 
             // Filter by category
@@ -31,7 +36,11 @@ class ProjectService
             }
         }
 
-        $projects = $query->latest()->paginate(9)->withQueryString();
+        $projects = $query
+            ->latest()
+            ->paginate(9)
+            ->withQueryString();
+
         $categories = Category::where('status', true)->get();
 
         return [
@@ -40,61 +49,72 @@ class ProjectService
         ];
     }
 
+
     public function getCreateFormData(): array
     {
         return [
             'category' => Category::where('status', true)->get(),
-            'users'    => User::where('role',  '!=',  'admin')->get(),
+
+            // Admins cannot be assigned to projects
+            'users' => User::where('role', '!=', 'admin')->get(),
         ];
     }
 
+
     public function store(array $data): Project
     {
-        return DB::transaction(function () use ($data) {
+        $project = DB::transaction(function () use ($data) {
+
             $members = $data['members'] ?? [];
             unset($data['members']);
-
-            if (!isset($data['assigned_user_id']) && !empty($members)) {
-                $data['assigned_user_id'] = $members[0];
-            }
-
             $project = Project::create($data);
-
+            if (!empty($data['assigned_user_id'])) {
+                $members[] = $data['assigned_user_id'];
+            }
+            $members = array_unique($members);
             if (!empty($members)) {
                 $project->members()->sync($members);
             }
 
+
             return $project;
         });
+        ProjectCreated::dispatch($project);
+        return $project;
     }
 
 
     public function update(Project $project, array $data): Project
     {
         return DB::transaction(function () use ($project, $data) {
+
             $members = $data['members'] ?? [];
             unset($data['members']);
-
-            if (!isset($data['assigned_user_id']) && !empty($members)) {
-                $data['assigned_user_id'] = $members[0];
-            }
-
             $project->update($data);
-
+            if (!empty($data['assigned_user_id'])) {
+                $members[] = $data['assigned_user_id'];
+            }
+            $members = array_unique($members);
             $project->members()->sync($members);
 
             return $project;
         });
     }
+    
+
 
     public function delete(Project $project): void
     {
         $project->delete();
     }
 
+
     public function addMember(Project $project, int $userId): Project
     {
-        $project->members()->syncWithoutDetaching([$userId]);
+        $project->members()->syncWithoutDetaching([
+            $userId
+        ]);
+
         return $project;
     }
 }

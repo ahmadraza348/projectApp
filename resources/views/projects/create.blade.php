@@ -100,21 +100,71 @@
               </div>
 
               <!-- Member Assignment -->
-              <div class="mb-4">
-                <label class="form-label">Assign Members</label>
-                <select class="form-select @error('members') is-invalid @enderror" name="members[]" multiple size="5">
-                  @foreach($data['users'] as $user)
-                    <!-- Fixed: Sends $user->id instead of $user->name -->
-                    <option value="{{ $user->id }}" {{ is_array(old('members')) && in_array($user->id, old('members')) ? 'selected' : '' }}>
-                      {{ $user->name }} - {{ Str::upper($user->role) }}
-                    </option>
-                  @endforeach
-                </select>
-                @error('members')
-                  <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-                <div class="form-text">Hold Ctrl (Windows) / Cmd (Mac) to select multiple members.</div>
-              </div>
+
+{{-- Project Lead --}}
+<div class="mb-4">
+    <label class="form-label">
+        Project Lead <span class="text-danger">*</span>
+    </label>
+
+    <select
+        class="form-select @error('assigned_user_id') is-invalid @enderror"
+        name="assigned_user_id">
+
+        <option value="">Select Project Lead</option>
+
+        @foreach($data['users'] as $user)
+            <option
+                value="{{ $user->id }}"
+                {{ old('assigned_user_id') == $user->id ? 'selected' : '' }}>
+                {{ $user->name }} - {{ Str::upper($user->role) }}
+            </option>
+        @endforeach
+
+    </select>
+
+    @error('assigned_user_id')
+        <div class="invalid-feedback">
+            {{ $message }}
+        </div>
+    @enderror
+</div>
+
+
+{{-- Project Members --}}
+<div class="mb-4">
+    <label class="form-label">
+        Project Members
+    </label>
+
+    <select
+        class="form-select @error('members') is-invalid @enderror"
+        name="members[]"
+        multiple
+        size="5">
+
+        @foreach($data['users'] as $user)
+            <option
+                value="{{ $user->id }}"
+                {{ is_array(old('members')) && in_array($user->id, old('members')) ? 'selected' : '' }}>
+                {{ $user->name }} - {{ Str::upper($user->role) }}
+            </option>
+        @endforeach
+
+    </select>
+
+    @error('members')
+        <div class="invalid-feedback">
+            {{ $message }}
+        </div>
+    @enderror
+
+    <div class="form-text">
+        Select the users who will work on this project.
+        The Project Lead can also be included in the team if required.
+    </div>
+</div>
+
 
               <!-- Action Buttons -->
               <div class="d-flex justify-content-end gap-2">
