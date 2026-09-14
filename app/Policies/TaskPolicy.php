@@ -41,14 +41,24 @@ class TaskPolicy
      * Admin/manager can update any task. A member can only update
      * (e.g. drag-drop status, edit) a task assigned to them.
      */
-    public function update(User $user, Task $task): bool
-    {
-        if (in_array($user->role, ['admin', 'manager'])) {
-            return true;
-        }
 
-        return $task->member_id === $user->id;
+public function update(User $user, Task $task): bool
+{
+    return in_array($user->role, ['admin', 'manager']);
+}
+
+public function updateStatus(User $user, Task $task): bool
+{
+    // Admin and manager can change any task status
+    if (in_array($user->role, ['admin', 'manager'])) {
+        return true;
     }
+
+    // Member can change status only for their own assigned task
+    return $user->role === 'member'
+        && $task->member_id === $user->id;
+}
+
 
     /**
      * Only admin/manager delete tasks — a member can't delete their own.

@@ -3,33 +3,178 @@
 @section('content')
 <div class="main-content">
   <header class="topbar d-flex align-items-center justify-content-between px-3">
-    <button id="sidebarToggle" class="btn btn-light border d-lg-none"><i class="bi bi-list"></i></button>
-    <h5 class="mb-0 d-none d-lg-block">Dashboard</h5>
-    <div class="d-flex align-items-center gap-3">     
-        <a href="#" class="position-relative text-dark"><i class="bi bi-bell fs-5"></i>
-        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size:.6rem;">3</span>
-      </a>
+
+    <button
+      id="sidebarToggle"
+      class="btn btn-light border d-lg-none">
+      <i class="bi bi-list"></i>
+    </button>
+
+    <h5 class="mb-0 d-none d-lg-block">
+      Dashboard
+    </h5>
+
+
+    <div class="d-flex align-items-center gap-3">
+
+      {{-- Notification --}}
+
+<div class="dropdown">
+
+    <button
+        type="button"
+        class="btn btn-link position-relative text-dark p-0 border-0"
+        id="notificationDropdown"
+        data-bs-toggle="dropdown"
+        aria-expanded="false">
+
+        <i class="bi bi-bell fs-5"></i>
+
+        <span
+            id="notificationBadge"
+            class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger
+                   {{ auth()->user()->unreadNotifications->count() > 0 ? '' : 'd-none' }}"
+            style="font-size:.6rem;">
+            {{ auth()->user()->unreadNotifications->count() }}
+        </span>
+
+    </button>
+
+
+    <div
+        class="dropdown-menu dropdown-menu-end p-0 shadow"
+        aria-labelledby="notificationDropdown"
+        style="width: 360px;">
+
+        <div class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom">
+            <strong>Notifications</strong>
+
+            <button
+                type="button"
+                id="markAllNotificationsRead"
+                class="btn btn-sm btn-link text-decoration-none">
+                Mark all as read
+            </button>
+        </div>
+
+
+        <div
+            id="notificationList"
+            style="max-height: 400px; overflow-y: auto;">
+
+        
+@forelse(auth()->user()->unreadNotifications as $notification)
+
+    @php
+        $taskLink = $notification->data['task_link']
+            ?? (isset($notification->data['task_id'])
+                ? route('task.show', $notification->data['task_id'])
+                : '#');
+    @endphp
+
+    <a
+        href="{{ $taskLink }}"
+        class="dropdown-item px-3 py-3 border-bottom notification-item bg-light text-decoration-none"
+        data-notification-id="{{ $notification->id }}">
+
+        <div class="d-flex gap-3">
+
+            <div class="text-primary pt-1">
+                <i class="bi bi-check-circle-fill"></i>
+            </div>
+
+            <div>
+
+                <div class="fw-semibold text-dark">
+                    {{ $notification->data['message'] ?? 'You have a new notification.' }}
+                </div>
+
+                @if(isset($notification->data['assigned_by']))
+                    <small class="text-muted">
+                        Assigned by {{ $notification->data['assigned_by'] }}
+                    </small>
+                @endif
+
+            </div>
+
+        </div>
+
+    </a>
+
+@empty
+
+    <div class="text-center text-muted py-4 notification-empty">
+        No notifications
+    </div>
+
+@endforelse
+
+
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+      {{-- User --}}
       <div class="dropdown">
-        <a href="#" class="d-flex align-items-center gap-2 text-dark text-decoration-none dropdown-toggle" data-bs-toggle="dropdown">
+
+        <a
+          href="#"
+          class="d-flex align-items-center gap-2 text-dark text-decoration-none dropdown-toggle"
+          data-bs-toggle="dropdown">
+
           <div class="avatar-circle">
             {{ strtoupper(substr(auth()->user()->name ?? 'U', 0, 2)) }}
           </div>
-          <span class="d-none d-md-inline small">{{ auth()->user()->name ?? 'User' }}</span>
+
+          <span class="d-none d-md-inline small">
+            {{ auth()->user()->name ?? 'User' }}
+          </span>
+
         </a>
+
         <ul class="dropdown-menu dropdown-menu-end">
-          <li><a class="dropdown-item" href="{{ route('user.profile') }}">My Profile</a></li>
+
+          <li>
+            <a
+              class="dropdown-item"
+              href="{{ route('user.profile') }}">
+              My Profile
+            </a>
+          </li>
+
           <li>
             <hr class="dropdown-divider">
           </li>
+
           <li>
-            <form method="POST" action="{{ route('logout') }}">
+
+            <form
+              method="POST"
+              action="{{ route('logout') }}">
+
               @csrf
-              <button type="submit" class="dropdown-item text-danger">Logout</button>
+
+              <button
+                type="submit"
+                class="dropdown-item text-danger">
+                Logout
+              </button>
+
             </form>
+
           </li>
+
         </ul>
+
       </div>
+
     </div>
+
   </header>
 
   <div class="page-content">

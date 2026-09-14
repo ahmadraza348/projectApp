@@ -95,14 +95,10 @@ class TaskController extends Controller
 
     public function updateStatus(Request $request, Task $task)
     {
-        $this->authorize('update', $task); // covers drag-drop — members can only move their own cards
-
-        $validated = $request->validate([
-            'status' => 'required|in:todo,in_progress,review,completed',
-        ]);
-
+        $this->authorize('updateStatus', $task);
+        $validated = $request->validate(['status' => 'required|in:todo,in_progress,review,completed',]);
         $this->service->updateStatus($task, $validated['status']);
         toastr()->success('Task status updated successfully!');
-        return response()->json(['success' => true]);
+        return response()->json(['success' => true,]);
     }
 }
