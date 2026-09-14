@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Task;
 use App\Models\TaskAttachment;
+use Flasher\Toastr\Prime\Toastr;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -26,8 +27,9 @@ class TaskAttachmentController extends Controller
                 'size'          => $file->getSize(),
             ]);
         }
+        toastr()->success('File(s) uploaded.'); 
 
-        return back()->with('success', 'File(s) uploaded.');
+        return redirect()->back();
     }
 
     public function destroy(TaskAttachment $attachment)
@@ -35,6 +37,7 @@ class TaskAttachmentController extends Controller
         Storage::disk('public')->delete($attachment->path);
         $attachment->delete();
 
-        return back()->with('success', 'Attachment deleted.');
+        toastr()->success('Attachment deleted.');
+        return redirect()->back();
     }
 }

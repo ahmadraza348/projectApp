@@ -22,17 +22,20 @@ class CategoryController extends Controller
 
     public function store(CategoryRequest $request){
         $this->service->store($request->validated());
-        return back()->with('success', 'Category Added');
+        toastr()->success('Category Added');
+        return redirect()->back();
     }
 
     public function update(CategoryRequest $request, Category $category){
         $category = $this->service->update($category, $request->validated());
-        return back()->with('success', 'Category Updated');
+        toastr()->success('Category Updated');
+        return redirect()->back();
     }
 
     public function destroy(Category $category){
        $this->service->destroy($category);
-        return back()->with('success', 'Category Deleted');
+        toastr()->success('Category Deleted');
+        return redirect()->back();
     }
 }
 

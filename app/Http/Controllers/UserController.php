@@ -39,8 +39,9 @@ class UserController extends Controller
         $this->authorize('create', User::class);
 
         $this->service->submitUser($request->validated());
+        toastr()->success('User created successfully!');
         
-        return redirect()->route('user.index')->with('success', 'User created successfully.');
+        return redirect()->route('user.index');
     }
 
     public function update(UserRequest $request, User $user)
@@ -50,9 +51,8 @@ class UserController extends Controller
 
         $this->service->updateUser($user, $request->validated());
 
-        return redirect()
-            ->route('user.index')
-            ->with('success', 'User updated successfully.');
+        toastr()->success('User updated successfully!');
+        return redirect()->route('user.index');
     }
 
     public function destroy(User $user)
@@ -62,9 +62,8 @@ class UserController extends Controller
 
         $this->service->deleteUser($user);
 
-        return redirect()
-            ->route('user.index')
-            ->with('success', 'User deleted successfully.');
+        toastr()->success('User deleted successfully!');
+        return redirect()->route('user.index');
     }
 
     public function profile()
@@ -79,7 +78,8 @@ class UserController extends Controller
         $user = auth()->user();
         $this->service->updateProfile($user, $request->validated());
 
-        return redirect()->route('user.profile')->with('success', 'Profile updated successfully.');
+        toastr()->success('Profile updated successfully!');
+        return redirect()->route('user.profile');
     }
 
     public function profile_password(ProfilePasswordRequest $request)
@@ -87,6 +87,7 @@ class UserController extends Controller
         $user = auth()->user();
         $this->service->updatePassword($user, $request->validated());
 
-        return redirect()->route('user.profile')->with('success', 'Password updated successfully.');
+        toastr()->success('Password updated successfully!');
+        return redirect()->route('user.profile');
     }
 }

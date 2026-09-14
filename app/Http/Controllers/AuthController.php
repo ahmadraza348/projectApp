@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\LoginRequest;
 use App\Services\AuthService;
+use Flasher\Toastr\Laravel\Facade\Toastr;
 use Illuminate\Http\Request;
 
 class AuthController extends Controller
@@ -26,6 +27,7 @@ class AuthController extends Controller
             $request->boolean('remember')
         );
         if ($result['success']) {
+            toastr()->success('Login successful');
             return redirect()->intended(route('dashboard'));
         }
 
@@ -40,6 +42,7 @@ class AuthController extends Controller
         $this->service->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+        toastr()->success('Logout successful');
         return redirect()->route('login');
     }
 }

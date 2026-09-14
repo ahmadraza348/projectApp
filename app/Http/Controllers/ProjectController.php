@@ -31,8 +31,8 @@ class ProjectController extends Controller
     public function store(ProjectRequest $request)
     {
         $this->service->store($request->validated());
-
-        return redirect()->route('project.index')->with('success', 'Project created successfully!');
+        toastr()->success('Project created successfully!');
+        return redirect()->route('project.index');
     }
 
     public function show(Project $project)
@@ -53,13 +53,15 @@ class ProjectController extends Controller
     public function update(ProjectRequest $request, Project $project)
     {
         $this->service->update($project, $request->validated());
-        return redirect()->route('project.index')->with('success', 'Project updated successfully!');
+        toastr()->success('Project updated successfully!');
+        return redirect()->route('project.index');
     }
 
     public function destroy(Project $project)
     {
         $this->service->delete($project);
-        return redirect()->route('project.index')->with('success', 'Project Deleted successfully!');
+        toastr()->success('Project Deleted successfully!');
+        return redirect()->route('project.index');
     }
 
     public function addMember(Request $request, Project $project)
@@ -69,7 +71,7 @@ class ProjectController extends Controller
         ]);
 
         $this->service->addMember($project, (int) $validated['user_id']);
-
-        return back()->with('success', 'Member added to project.');
+        toastr()->success('Member added to project successfully!');
+        return redirect()->back();
     }
 }

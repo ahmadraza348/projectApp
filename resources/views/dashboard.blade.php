@@ -6,6 +6,9 @@
     <button id="sidebarToggle" class="btn btn-light border d-lg-none"><i class="bi bi-list"></i></button>
     <h5 class="mb-0 d-none d-lg-block">Dashboard</h5>
     <div class="d-flex align-items-center gap-3">     
+        <a href="#" class="position-relative text-dark"><i class="bi bi-bell fs-5"></i>
+        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size:.6rem;">3</span>
+      </a>
       <div class="dropdown">
         <a href="#" class="d-flex align-items-center gap-2 text-dark text-decoration-none dropdown-toggle" data-bs-toggle="dropdown">
           <div class="avatar-circle">
