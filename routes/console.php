@@ -1,8 +1,32 @@
+
 <?php
 
-use Illuminate\Foundation\Inspiring;
-use Illuminate\Support\Facades\Artisan;
+use App\Models\Project;
+use App\Jobs\SendProjectDeadlineReminderJob;
+use Illuminate\Support\Facades\Schedule;
 
-Artisan::command('inspire', function () {
-    $this->comment(Inspiring::quote());
-})->purpose('Display an inspiring quote');
+// Schedule::call(function () {
+
+//     Project::query()
+//         ->where('status', '!=', 'complete')
+//         ->whereDate('end_date', now()->addDay())
+//         ->each(function ($project) {
+
+//             SendProjectDeadlineReminderJob::dispatch($project);
+
+//         });
+
+// })->everyMinute();
+
+Schedule::call(function () {
+
+    Project::query()
+        ->where('status', '!=', 'complete')
+        ->whereDate('end_date', now()->addDays(3))
+        ->each(function ($project) {
+
+            SendProjectDeadlineReminderJob::dispatch($project);
+
+        });
+
+})->dailyAt('09:00');
