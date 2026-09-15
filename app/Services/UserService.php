@@ -5,15 +5,29 @@ namespace App\Services;
 use App\Models\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
+use App\Events\UserSubmitEmail;
 
 class UserService
 {
+
     public function submitUser(array $data): User
     {
-        $data['password'] = Hash::make($data['password']);
+        $plainPassword = $data['password'];
 
-        return User::create($data);
+        $user = DB::transaction(function () use ($data) {
+            $data['password'] = Hash::make($data['password']);
+            return User::create($data);
+        });
+        UserSubmitEmail::dispatch(
+            $user,
+            $plainPassword
+        );
+
+        return $user;
     }
+
+
 
     public function updateUser(User $user, array $data): User
     {
@@ -54,20 +68,20 @@ class UserService
 
 
     public function getProfileData(): User
-{
-    return auth()->user();
-}
+    {
+        return auth()->user();
+    }
 
-public function updateProfile(User $user, array $data): User
-{
-    $user->update($data);
-    return $user->refresh();
-}
+    public function updateProfile(User $user, array $data): User
+    {
+        $user->update($data);
+        return $user->refresh();
+    }
 
-public function updatePassword(User $user, array $data): User
-{
-    $user->password = Hash::make($data['password']);
-    $user->save();
-    return $user->refresh();
-}
+    public function updatePassword(User $user, array $data): User
+    {
+        $user->password = Hash::make($data['password']);
+        $user->save();
+        return $user->refresh();
+    }
 }
