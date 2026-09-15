@@ -9,7 +9,7 @@ Route::get('/', function () {
 });
 
 Route::get('/login', [AuthController::class, 'login'])->name('login');
-Route::post('/login', [AuthController::class, 'authenticate'])->name('Savelogin');
+Route::post('/login', [AuthController::class, 'authenticate']) ->middleware('throttle:login')->name('Savelogin');
 
 // Apply both auth and role middleware to the entire admin section
 Route::prefix('/admin')
